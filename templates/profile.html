@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ db.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      body {
+        padding-top: 10px;
+        padding-bottom: 40px;
+        text-decoration: none;
+      }
+
+      a {
+        outline: 0 !important;
+      }
+
+
+    .legend_c { border-left: #3090B4 3px solid; padding-left: 4px;}
+    .legend_w { border-left: #00AB3F 3px solid; padding-left: 4px;}
+    .legend_q { border-left: #DB95E5 3px solid; padding-left: 4px;}
+    .legend_h { border-left: #FFE880 3px solid; padding-left: 4px;}
+    .legend_d { border-left: #FF6F6F 3px solid; padding-left: 4px;}
+    
+    .legend_c:hover {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_w:hover {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_q:hover {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_h:hover {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_d:hover {filter: alpha(opacity=60); opacity: 0.6;}
+
+
+    li.s_c > a:hover{
+        background-image: none !important;
+        background-color: #3090B4 !important;
+        color: #FFFFFF !important;    
+    }
+
+    li.s_w > a:hover{
+        background-image: none !important;
+        background-color: #00AB3F !important;
+        color: #FFFFFF !important;
+    }
+
+    li.s_q > a:hover{
+        background-image: none !important;
+        background-color: #DB95E5 !important;
+        color: #FFFFFF !important;
+    }
+
+    li.s_h > a:hover{
+        background-image: none !important;
+        background-color: #FFE880 !important;
+        color: #222 !important;      
+    }
+
+    li.s_d > a:hover{
+        background-image: none !important;
+        background-color: #FF6F6F !important;
+        color: #FFFFFF !important;    
+    }
+
+    ///////////////
+
+    li.active_c > a, li.active_c > a:hover, li.active_c > a:focus {
+        background-image: none !important;
+        background-color: #3090B4 !important;
+        color: #FFFFFF !important;
+        opacity: 1.0 !important;
+    }
+
+    li.active_w > a, li.active_w > a:hover, li.active_w > a:focus {
+        background-image: none !important;
+        background-color: #00AB3F !important;
+        color: #FFFFFF !important;
+        opacity: 1.0 !important;
+    }
+
+    li.active_q > a, li.active_q > a:hover, li.active_q > a:focus {
+        background-image: none !important;
+        background-color: #DB95E5 !important;
+        color: #FFFFFF !important;
+        opacity: 1.0 !important;
+    }
+
+    li.active_h > a, li.active_h > a:hover, li.active_h > a:focus {
+        background-image: none !important;
+        background-color: #FFE880 !important;
+        color: #FFFFFF !important;
+        opacity: 1.0 !important;
+    }
+
+    li.active_d > a, li.active_d > a:hover, li.active_d > a:focus {
+        background-image: none !important;
+        background-color: #FF6F6F !important;
+        color: #FFFFFF !important;
+        opacity: 1.0 !important;
+    }    
+
+    </style>
+
+    <script type="text/javascript">
+      var last_i = '0';
+      var last_status = '';
+
+      function select(i, status) {
+        $('#' + last_i).removeClass('active_' + last_status);
+        $('#' + i).addClass('active_' + status);
+        last_i = i;
+        last_status = status;
+        $('#dcontent').slideUp(300, function() {
+          $('#dcontent').html('<img src="/static/loading.gif" />');
+          $('#dcontent').slideDown(300, function() {
+            $.get('/ajax/entry/' + i, function(data){
+              $('#dcontent').slideUp(300, function(){
+                $('#dcontent').html(data);
+                $('#dcontent').slideDown(300);
+              })
+            })
+          });
+        });
+        
+      };
+
+    </script>
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="#">Futaam</a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+              Logged in as <a href="#" class="navbar-link">Username</a>
+            </p>
+            <!--<ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+            </ul> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background-color: #FFFFFF; position: fixed; width: 100%">
+    <ul class="nav nav-tabs" id="myTab" style="padding-top: 40px;">
+      <li><a href="#profile" onclick="$(this).tab('show'); return false;">Profile</a></li>
+      <li class="active"><a href="#entries" onclick="$(this).tab('show'); return false;">Entries</a></li>
+      <li><a href="#activity" onclick="$(this).tab('show'); return false;">Activity</a></li>
+      <li><a href="#comments" onclick="$(this).tab('show'); return false;">Comments</a></li>
+    </ul>
+  </div>
+
+
+    <div class="tab-content" style="padding-top: 100px;">
+      <div class="tab-pane" id="profile">...</div>
+      <div class="tab-pane active" id="entries">
+
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav">
+            <ul class="nav nav-list">
+              {% for item in db['items'] %}<li id="{{ item['id'] }}" class="legend_{{ item['status'] }} s_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="span9">
+
+          <div class="breadcrumb" id="dcontent" style="position: fixed; width: 60%">
+          </div>
+        </div>
+      <hr>
+
+    </div>
+
+    </div>
+      <div class="tab-pane" id="activity">...</div>
+      <div class="tab-pane" id="comments">...</div>
+    </div>
+  </body>
+</html>
