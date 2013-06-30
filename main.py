@@ -3,6 +3,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory
 from werkzeug import secure_filename
 from sys import argv
+import cgi
 import utils
 app = Flask(__name__)
 
@@ -26,7 +27,9 @@ def page_index():
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
-	entry = db['items'][int(id)]
+	entry = db['items'][int(id)].copy()
+	for item in entry:
+		entry[item] = cgi.escape(unicode(entry[item]))
 
 	if entry['type'] in ['anime', 'manga']:
 		deep = mal.details(entry['aid'], entry['type'])
