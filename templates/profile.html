@@ -30,11 +30,11 @@
     .legend_h { border-left: #FFE880 3px solid; padding-left: 4px;}
     .legend_d { border-left: #FF6F6F 3px solid; padding-left: 4px;}
     
-    .legend_c:hover {filter: alpha(opacity=60); opacity: 0.6;}
-    .legend_w:hover {filter: alpha(opacity=60); opacity: 0.6;}
-    .legend_q:hover {filter: alpha(opacity=60); opacity: 0.6;}
-    .legend_h:hover {filter: alpha(opacity=60); opacity: 0.6;}
-    .legend_d:hover {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_c:hover:not(.active_c) {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_w:hover:not(.active_w) {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_q:hover:not(.active_q) {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_h:hover:not(.active_h) {filter: alpha(opacity=60); opacity: 0.6;}
+    .legend_d:hover:not(.active_d) {filter: alpha(opacity=60); opacity: 0.6;}
 
 
     li.s_c > a:hover{
@@ -168,7 +168,7 @@
         <div class="span3">
           <div class="sidebar-nav">
             <ul class="nav nav-list">
-              {% for item in db['items'] %}<li id="{{ item['id'] }}" class="legend_{{ item['status'] }} s_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endfor %}
+              {% for item in db['items'] %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endfor %}
             </ul>
           </div>
         </div>
