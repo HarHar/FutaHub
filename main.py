@@ -5,6 +5,7 @@ from werkzeug import secure_filename
 from sys import argv
 import cgi
 import utils
+from copy import deepcopy
 app = Flask(__name__)
 
 import os, json
@@ -32,7 +33,7 @@ def ajax_entry(id):
 	elif int(id) >= len(db['items']):
 		return '<h1>Entry not found</h1>', 404
 
-	entry = db['items'][int(id)].copy()
+	entry = deepcopy(db['items'][int(id)])
 	for item in entry:
 		entry[item] = cgi.escape(unicode(entry[item]))
 
