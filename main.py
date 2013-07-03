@@ -2,10 +2,19 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory
 from werkzeug import secure_filename
-from sys import argv
+from sys import argv, stderr
 import cgi
 import utils
 from copy import deepcopy
+
+mode = 'private'
+for i, arg in enumerate(argv):
+	if arg.replace('-', '').lower() == 'mode':
+		if len(argv) > i:
+			if not (argv[i+1].lower() in ['private', 'public']):
+				stderr.write('Mode should be "private" or "public"\n')
+				exit(1)
+
 app = Flask(__name__)
 
 import os, json
@@ -22,9 +31,14 @@ else:
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
-@app.route('/')
-def page_index():
-    return render_template('profile.html', db=db)
+if mode == 'private':
+	@app.route('/')
+	def page_index():
+	    return render_template('profile.html', db=db)
+else:
+	@app.route('/')
+	def page_index():
+		return 'Not implemented yet', 418 #Error 418 I'm a teapot
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
