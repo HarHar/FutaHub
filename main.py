@@ -38,7 +38,7 @@ if mode == 'private':
 else:
 	@app.route('/')
 	def page_index():
-		return 'Not implemented yet', 418 #Error 418 I'm a teapot
+		return 'Not implemented yet', 501
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
