@@ -9,35 +9,10 @@
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="/static/profile.js"></script>
 
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/static/profile.css" rel="stylesheet">
-
-    <script type="text/javascript">
-      var last_i = '0';
-      var last_status = '';
-
-      function select(i, status) {
-        $('#' + last_i).removeClass('active_' + last_status);
-        $('#' + i).addClass('active_' + status);
-        last_i = i;
-        last_status = status;
-        $('#dcontent').slideUp(300, function() {
-          $('#dcontent').html('<img src="/static/loading.gif" />');
-          $('#dcontent').slideDown(300, function() {
-            $.get('/ajax/entry/' + i, function(data){
-              $('#dcontent').slideUp(300, function(){
-                $('#dcontent').html(data);
-                $('#dcontent').slideDown(300);
-              })
-            })
-          });
-        });
-        
-      };
-
-    </script>
   </head>
 
   <body>
