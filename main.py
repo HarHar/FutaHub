@@ -14,6 +14,7 @@ for i, arg in enumerate(argv):
 			if not (argv[i+1].lower() in ['private', 'public']):
 				stderr.write('Mode should be "private" or "public"\n')
 				exit(1)
+			else: mode = argv[i+1].lower()
 
 app = Flask(__name__)
 
@@ -31,6 +32,7 @@ else:
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
+print repr(mode)
 if mode == 'private':
 	@app.route('/')
 	def page_index():
