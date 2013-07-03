@@ -1,0 +1,39 @@
+{% if entry['type'] == 'anime' %}
+	<img src="{{ deep['image_url'] }}" style="float: left; padding-right: 10px;" />
+	<h1>{{ entry['name'] }}</h1>
+	<b>Status: </b>{{ trstatus }}<br />
+	<b>Last episode watched: </b>{{ entry['lastwatched'] }}<br />
+	<b>Total episodes: </b>{{ deep['episodes'] }}<br />
+	<b>Genre: </b>{{ entry['genre'] }}<br />
+	{% if deep['end_date'] != None %}
+		<b>Year: </b>{{ deep['start_date'] }} - {{ deep['end_date'] }}<br />
+	{% else %}
+		<b>Year: </b>{{ deep['start_date'] }} - ongoing<br />
+	{% endif %}
+	<b>Type: </b>{{ deep['type'] }}<br />
+	<b>Classification: </b>{{ deep['classification'] }}<br />
+	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
+	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+{% elif entry['type'] == 'manga' %}
+	<img src="{{ deep['image_url'] }}" style="float: left; padding-right: 10px;" />
+	<h1>{{ entry['name'] }}</h1>
+	<b>Status: </b>{{ trstatus }}'<br />
+	<b>Last chapter/volume read: </b>{{ entry['lastwatched'] }}<br />
+	<b>Chapters/volumes: </b>{{ deep['chapters'] }}/{{ deep['volumes'] }}<br />
+	<b>Type: </b>{{ deep['type'] }}<br />
+	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
+	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+{% elif entry['type'] == 'vn' %}
+	<img src="{{ deep['image'] }}" style="float: left; padding-right: 10px;" />
+	{% if aliases_len == 0 %}
+		<h1>{{ deep['title'] }}</h1>'
+	{% else %}
+		<h1>{{ deep['title'] }}</h1><h3> [{{ deep['aliases'] }}]</h1>
+	{% endif %}
+	<b>Status: </b>{{ trstatus }}<br />
+	<b>Platforms: </b>{{ platforms }}<br />
+	<b>Released: </b>{{ deep['released'] }}<br />
+	<b>Languages: </b>{{ deep['languages'] }}<br />
+	<b>Synopsis: </b>{{ deep['description'] }}<br />
+	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+{% endif %}

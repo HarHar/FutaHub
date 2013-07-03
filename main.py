@@ -37,44 +37,10 @@ def ajax_entry(id):
 		entry[item] = cgi.escape(unicode(entry[item]))
 
 	if entry['type'] in ['anime', 'manga']:
-		deep = mal.details(entry['aid'], entry['type'])
+		return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
+			entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
 	elif entry['type'] == 'vn':
 		deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
-
-	if entry['type'] == 'anime':
-		out = '<img src="{0}" style="float: left; padding-right: 10px;" />'.format(deep['image_url'])
-		out += '<h1>' + entry['name'] + '</h1>'
-		out += '<b>Status: </b>{0}'.format(utils.translated_status[entry['type']][entry['status']]) + '<br />'
-		out += '<b>Last episode watched: </b>{0}'.format(entry['lastwatched']) + '<br />'
-		out += '<b>Total episodes: </b>{0}'.format(deep['episodes']) + '<br />'
-		out += '<b>Genre: </b>{0}'.format(entry['genre']) + '<br />'
-		if deep['end_date'] != None:
-			out += '<b>Year: </b>{0} - {1}'.format(deep['start_date'], deep['end_date']) + '<br />'
-		else:
-			out += '<b>Year: </b>{0} - {1}'.format(deep['start_date'], 'ongoing') + '<br />'
-		out += '<b>Type: </b>{0}'.format(deep['type']) + '<br />'
-		out += '<b>Classification: </b>{0}'.format(deep['classification']) + '<br />'
-		out += '<b>Synopsis: </b>{0}'.format(utils.remove_html_tags(deep['synopsis'])) + '<br />'
-		out += '<br /><b>Observations: </b>{0}'.format(entry['obs']) if entry['obs'] != '' else '<br /><b>No observations</b>'
-	elif entry['type'] == 'manga':
-		out = '<img src="{0}" style="float: left; padding-right: 10px;" />'.format(deep['image_url'])
-		out += '<h1>' + entry['name'] + '</h1>'
-		out += '<b>Status: </b>{0}'.format(utils.translated_status[entry['type']][entry['status']]) + '<br />'
-		out += '<b>Last chapter/volume read: </b>{0}'.format(entry['lastwatched']) + '<br />'
-		out += '<b>Chapters/volumes: </b>{0}/{1}'.format(deep['chapters'], deep['volumes']) + '<br />'
-		out += '<b>Type: </b>{0}'.format(deep['type']) + '<br />'
-		out += '<b>Synopsis: </b>{0}'.format(utils.remove_html_tags(deep['synopsis'])) + '<br />'
-		out += '<br /><b>Observations: </b>{0}'.format(entry['obs']) if entry['obs'] != '' else '<br /><b>No observations</b>'
-	elif entry['type'] == 'vn':
-		"""				toprint = {'Name': entry['name'], 'Genre': entry['genre'],
-				 'Observations': entry['obs'], 'Status': utils.translated_status[entry['type']][entry['status'].lower()]}
-		"""
-		out = '<img src="{0}" style="float: left; padding-right: 10px;" />'.format(deep['image'])
-		if len(deep['aliases']) == 0:
-			out += '<h1>' + deep['title'] + '</h1>'
-		else:
-			out += '<h1>' + deep['title'] + '</h1><h3> [' + deep['aliases'].replace('\n', '/') + ']</h1>' 
-		out += '<b>Status: </b>{0}'.format(utils.translated_status[entry['type']][entry['status']]) + '<br />'
 		platforms = []
 		for platform in deep['platforms']:
 			names = {'lin': 'Linux', 'mac': 'Mac', 'win': 'Windows', 'and': 'Android', 'oth': 'Other', 'xb3': 'Xbox 360'}
@@ -83,13 +49,11 @@ def ajax_entry(id):
 			else:
 				platform = platform[0].upper() + platform[1:]
 			platforms.append(platform)
-		out += '<b>Platforms: </b>{0}'.format('/'.join(platforms)) + '<br />'
-		out += '<b>Released: </b>{0}'.format(deep['released']) + '<br />'
-		out += '<b>Languages: </b>{0}'.format('/'.join(deep['languages'])) + '<br />'
-		out += '<b>Synopsis: </b>{0}'.format(deep['description']) + '<br />'
-		out += '<br /><b>Observations: </b>{0}'.format(entry['obs']) if entry['obs'] != '' else '<br /><b>No observations</b>'
-	return out
-
+		deep['aliases'] = deep['aliases'].replace('\n', '')
+		deep['languages'] = '/'.join(deep['languages'])
+		return render_template('entry_details.html', entry=entry, deep=deep,
+			trstatus=utils.translated_status[entry['type']][entry['status']], platforms='/'.join(platforms),
+			aliases_len=len(deep['aliases']))
 
 if __name__ == '__main__':
     app.debug = True if '--debug' in argv else False
