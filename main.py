@@ -65,6 +65,7 @@ sys.stderr = streamWrapper(sys.stderr)
 sys.__stderr__ = streamWrapper(sys.__stderr__)
 
 mode = 'private'
+dbpath = ''
 for i, arg in enumerate(argv):
 	if arg.replace('-', '').lower() == 'mode':
 		if len(argv) > i:
@@ -72,6 +73,13 @@ for i, arg in enumerate(argv):
 				stderr.write('Mode should be "private" or "public"\n')
 				exit(1)
 			else: mode = argv[i+1].lower()
+	elif arg.replace('-', '').lower() in ['db', 'database']:
+		if len(argv) > i:
+			if os.path.exists(argv[i+1]) == False:
+				print colors.fail + 'Path does not exist' + colors.default
+				exit()
+			else: dbpath = argv[i+1]
+
 
 app = Flask(__name__)
 
@@ -79,8 +87,10 @@ import os, json, pickle
 storage_dir = os.path.join(os.environ['HOME'], '.futahub/')
 
 db = {}
-dbpath = os.path.join(storage_dir, 'main.db')
+if dbpath == '':
+	dbpath = os.path.join(storage_dir, 'main.db')
 mtime = 0
+
 def reload():
 	global db, dbpath, mtime
 	if os.path.exists(dbpath):
@@ -100,8 +110,7 @@ def reload():
 	return False
 
 if not reload():
-	print('Put your database on ~/.futahub/main.db')
-	print('This behavior will be changed on the future')
+	print('Specify the Futaam file by using the --db argument or put your database on ~/.futahub/main.db')
 	exit()
 
 mal = utils.MALWrapper()
