@@ -75,13 +75,26 @@ for i, arg in enumerate(argv):
 
 app = Flask(__name__)
 
-import os, json
+import os, json, pickle
 storage_dir = os.path.join(os.environ['HOME'], '.futahub/')
 
 db = {}
-if os.path.exists(os.path.join(storage_dir, 'main.db')):
-	db = json.loads(open(os.path.join(storage_dir, 'main.db')).read().split('\n')[1])
-else:
+dbpath = os.path.join(storage_dir, 'main.db')
+def reload(db, dbpath):
+	if os.path.exists(dbpath):
+		f = open(dbpath, 'r')
+		f_contents = f.read().split('\n')
+		if len(f_contents) < 2:
+			return False
+		if f_contents[0] == '[json]':
+			db = json.loads(f_contents[1])
+		elif f_contents[0] == '[pickle]':
+			db = pickle.loads(f_contents[1])
+		else:
+			return False
+		return True
+
+if not reload(db, dbpath):
 	print('Put your database on ~/.futahub/main.db')
 	print('This behavior will be changed on the future')
 	exit()
@@ -92,7 +105,8 @@ vndb = utils.VNDB('FutaHub Dev', '0.1')
 if mode == 'private':
 	@app.route('/')
 	def page_index():
-	    return render_template('profile.html', db=db)
+		reload(db, dbpath)
+		return render_template('profile.html', db=db)
 else:
 	@app.route('/')
 	def page_index():
