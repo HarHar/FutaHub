@@ -120,7 +120,7 @@ if mode == 'private':
 	@app.route('/')
 	def page_index():
 		reload()
-		return render_template('profile.html', db=db)
+		return render_template('profile.html', db=db, mode=mode)
 else:
 	@app.route('/')
 	def page_index():
