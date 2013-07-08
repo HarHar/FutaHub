@@ -135,6 +135,10 @@ else:
 	def test():
 		session['username'] = 'test'
 		return 'Lel logged in as "test" fgt'
+	@app.route('/logout')
+	def logout():
+		session.pop('username', None)
+		return redirect(url_for('page_index'))
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
