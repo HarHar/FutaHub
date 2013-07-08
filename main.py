@@ -9,6 +9,7 @@ import utils
 from copy import deepcopy
 import os
 import random, string
+import hashlib
 
 class colours():
     def __init__(self):
@@ -114,6 +115,11 @@ if not reload():
 	print('Specify the Futaam file by using the --db argument or put your database on ~/.futahub/main.db')
 	exit()
 
+if '--test' in argv:
+	db = {'users': {'test': {'username': 'test', 'password': '03edf7f5dd7ed2e344a3b1f2ec16c0291902d81fcc60eabc61e35ce61ce53f45f4d6b0e809b36771e75caad552377296b50c359d299d5e79e680848b2aec06ee',
+	'db': {"count": 0, "items": [], "name": "el db", "description": "lel fgt"}}}}
+
+
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
@@ -139,6 +145,18 @@ else:
 	def logout():
 		session.pop('username', None)
 		return redirect(url_for('page_index'))
+	@app.route('/login', methods=['GET', 'POST'])
+	def login():
+		if request.method == 'POST':
+			if request.form.get('username') == None or isinstance(request.form.get('password'), basestring) != True: return 'Invalid request'
+
+			user = db['users'].get(request.form.get('username'))
+			if user != None:
+				if user['password'] == hashlib.sha512(request.form.get('password')).hexdigest():
+					session['username'] = request.form['username']
+					return redirect(url_for('page_index'))
+			return 'Username/password incorrect'
+		return render_template('login.html', db=db)
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
