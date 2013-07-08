@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory, escape
 from werkzeug import secure_filename
 from sys import argv, stderr
 import sys, re
@@ -125,7 +125,16 @@ if mode == 'private':
 else:
 	@app.route('/')
 	def page_index():
-		return 'Not implemented yet', 501
+		logged_in = False
+		username = ''
+		if 'username' in session:
+			logged_in = True
+			username = escape(session['username'])
+		return render_template('home.html', db=db, mode=mode, logged_in=logged_in, username=username)
+	@app.route('/test')
+	def test():
+		session['username'] = 'test'
+		return 'Lel logged in as "test" fgt'
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
