@@ -13,7 +13,7 @@
 	<b>Type: </b>{{ deep['type'] }}<br />
 	<b>Classification: </b>{{ deep['classification'] }}<br />
 	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
-	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% elif entry['type'] == 'manga' %}
 	<img src="{{ deep['image_url'] }}" style="float: left; padding-right: 10px;" />
 	<h1>{{ entry['name'] }}</h1>
@@ -22,7 +22,7 @@
 	<b>Chapters/volumes: </b>{{ deep['chapters'] }}/{{ deep['volumes'] }}<br />
 	<b>Type: </b>{{ deep['type'] }}<br />
 	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
-	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% elif entry['type'] == 'vn' %}
 	<img src="{{ deep['image'] }}" style="float: left; padding-right: 10px;" />
 	{% if aliases_len == 0 %}
@@ -35,5 +35,5 @@
 	<b>Released: </b>{{ deep['released'] }}<br />
 	<b>Languages: </b>{{ deep['languages'] }}<br />
 	<b>Synopsis: </b>{{ deep['description'] }}<br />
-	<br /><b>Observations: </b>{% if entry['obs'] != '' %}{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% endif %}
