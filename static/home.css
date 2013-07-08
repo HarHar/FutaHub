@@ -1,0 +1,9 @@
+  body {
+    padding-top: 10px;
+    padding-bottom: 40px;
+    text-decoration: none;
+  }
+
+  a {
+    outline: 0 !important;
+  }
