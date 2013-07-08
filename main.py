@@ -8,6 +8,7 @@ import cgi
 import utils
 from copy import deepcopy
 import os
+import random, string
 
 class colours():
     def __init__(self):
@@ -158,4 +159,5 @@ def ajax_entry(id):
 
 if __name__ == '__main__':
     app.debug = True if '--debug' in argv else False
+    app.secret_key = ''.join([random.choice(string.letters) for x in xrange(0, 30)])
     app.run(host='0.0.0.0')
