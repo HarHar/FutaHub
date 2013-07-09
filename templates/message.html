@@ -9,10 +9,8 @@
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/static/home.js"></script>
 
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="/static/home.css" rel="stylesheet">
   </head>
 
   <body>
@@ -24,7 +22,7 @@
           <div class="nav-collapse collapse">
             {% if info['mode'] == 'public' %}
             {% if info['logged_in'] %}<p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)
+              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a>
             </p> {% else %} <p class="navbar-text pull-right">
               <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
             </p> {% endif %}
@@ -39,5 +37,8 @@
       </div>
     </div>
 
+    <div class="well" style="margin-top: 50px; margin-left: 10%; margin-right: 10%;">
+      <h3> {{ message }} </h3>
+    </div>
   </body>
 </html>

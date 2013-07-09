@@ -134,8 +134,7 @@ if not reload():
 
 if '--test' in argv:
 	db = {'users': {'test': {'username': 'test', 'password': '03edf7f5dd7ed2e344a3b1f2ec16c0291902d81fcc60eabc61e35ce61ce53f45f4d6b0e809b36771e75caad552377296b50c359d299d5e79e680848b2aec06ee',
-	'db': {"count": 0, "items": [], "name": "el db", "description": "lel fgt"}}}}
-
+	'dbs': [{"count": 0, "items": [], "name": "el db", "description": "lel fgt"}]}}}
 
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
@@ -146,6 +145,17 @@ if mode == 'private':
 		reload()
 		return render_template('profile.html', db=db, mode=mode)
 else:
+	def info():
+		global db, session, mode
+		logged_in = False
+		username = ''
+		user = None
+		if 'username' in session:
+			logged_in = True
+			username = escape(session['username'])
+			user = db['users'][session['username']]
+		return {'logged_in': logged_in, 'username': username, 'user': user, 'mode': mode, 'db': db}
+
 	@app.route('/')
 	def page_index():
 		logged_in = False
@@ -153,11 +163,7 @@ else:
 		if 'username' in session:
 			logged_in = True
 			username = escape(session['username'])
-		return render_template('home.html', db=db, mode=mode, logged_in=logged_in, username=username)
-	@app.route('/test')
-	def test():
-		session['username'] = 'test'
-		return 'Lel logged in as "test" fgt'
+		return render_template('home.html', info=info())
 	@app.route('/logout')
 	def logout():
 		session.pop('username', None)
@@ -165,15 +171,35 @@ else:
 	@app.route('/login', methods=['GET', 'POST'])
 	def login():
 		if request.method == 'POST':
-			if request.form.get('username') == None or isinstance(request.form.get('password'), basestring) != True: return 'Invalid request'
+			if request.form.get('username') == None or isinstance(request.form.get('password'), basestring) != True: return render_template('message.html', info=info(), message='Invalid request')
 
 			user = db['users'].get(request.form.get('username'))
 			if user != None:
 				if user['password'] == hashlib.sha512(request.form.get('password')).hexdigest():
 					session['username'] = request.form['username']
 					return redirect(url_for('page_index'))
-			return 'Username/password incorrect'
-		return render_template('login.html', db=db)
+			return render_template('message.html', info=info(), message='Username/password incorrect')
+		return render_template('login.html', info=info())
+	@app.route('/register', methods=['GET', 'POST'])
+	def register():
+		if 'username' in session:
+			return render_template('message.html', info=info(), message='Already logged in')
+		if request.method == 'POST':
+			for field, ftype in (('username', basestring), ('password', basestring), ('password2', basestring)):
+				if isinstance(request.form.get(field), ftype) == False: return 'Invalid request'
+
+			if request.form['password'] != request.form['password2']:
+				return render_template('message.html', info=info(), message='Passwords did not match.')
+
+			if request.form['username'] in db['users']:
+				return render_template('message.html', info=info(), message='User already exists.')
+
+			db['users'][request.form['username']] = {'username': request.form['username'], 'password': hashlib.sha512(request.form['password']).hexdigest(),
+			'dbs': []}
+
+			session['username'] = request.form['username']
+			return render_template('message.html', info=info(), message=u'✔ Registered')
+		return render_template('register.html', info=info())		
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
