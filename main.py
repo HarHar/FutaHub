@@ -116,14 +116,15 @@ def reload():
 			mtime = os.stat(dbpath).st_mtime
 			f = open(dbpath, 'r')
 			f_contents = f.read().split('\n')
-			if len(f_contents) < 2:
-				return False
-			if f_contents[0] == '[json]':
-				db = json.loads(f_contents[1])
-			elif f_contents[0] == '[pickle]':
-				db = pickle.loads(f_contents[1])
+			if len(f_contents) == 2:
+				if f_contents[0] == '[json]':
+					db = json.loads(f_contents[1])
+				elif f_contents[0] == '[pickle]':
+					db = pickle.loads(f_contents[1])
+				else:
+					return False
 			else:
-				return False
+				db = json.loads(f_contents[0])
 			return True
 	return False
 
