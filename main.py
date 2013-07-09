@@ -85,7 +85,7 @@ for i, arg in enumerate(argv):
 	elif arg.replace('-', '').lower() in ['createdb', 'create']:
 		if len(argv) > i:
 			if not (argv[i+1].lower() in ['private', 'public']):
-				stderr.write('Use: --createdb private or --createdb public')
+				stderr.write('Use: --createdb private or --createdb public\n')
 				exit(1)
 			else:
 				if argv[i+1].lower() == 'private':
