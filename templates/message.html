@@ -22,7 +22,7 @@
           <div class="nav-collapse collapse">
             {% if info['mode'] == 'public' %}
             {% if info['logged_in'] %}<p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a>
+              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)
             </p> {% else %} <p class="navbar-text pull-right">
               <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
             </p> {% endif %}
