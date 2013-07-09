@@ -10,6 +10,7 @@ from copy import deepcopy
 import os
 import random, string
 import hashlib
+import os, json, pickle
 
 class colours():
     def __init__(self):
@@ -81,16 +82,31 @@ for i, arg in enumerate(argv):
 				print colors.fail + 'Path does not exist' + colors.default
 				exit()
 			else: dbpath = argv[i+1]
-
+	elif arg.replace('-', '').lower() in ['createdb', 'create']:
+		if len(argv) > i:
+			if not (argv[i+1].lower() in ['private', 'public']):
+				stderr.write('Use: --createdb private or --createdb public')
+				exit(1)
+			else:
+				if argv[i+1].lower() == 'private':
+					print colors.fail + 'Symlink your Futaam database file to ~/.futahub/main.db or use the --db argument' + colors.default
+				else:
+					if os.path.exists(os.path.join(os.path.join(os.environ['HOME'], '.futahub/'), 'public.db')):
+						print colors.warning + 'File exists' + colors.default
+						exit(2)
+					if os.path.exists(os.path.join(os.environ['HOME'], '.futahub/')) == False:
+						os.mkdir(os.path.join(os.environ['HOME'], '.futahub/'))
+					open(os.path.join(os.path.join(os.environ['HOME'], '.futahub/'), 'public.db'), 'w').write(json.dumps({'users': {}}))
+					print colors.green + 'Empty database created on ~/.futahub/public.db' + colors.default
+					exit()
 
 app = Flask(__name__)
 
-import os, json, pickle
 storage_dir = os.path.join(os.environ['HOME'], '.futahub/')
 
 db = {}
 if dbpath == '':
-	dbpath = os.path.join(storage_dir, 'main.db')
+	dbpath = os.path.join(storage_dir, 'main.db' if mode == 'private' else 'public.db')
 mtime = 0
 
 def reload():
