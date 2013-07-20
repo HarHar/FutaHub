@@ -47,11 +47,39 @@
     </div>
 
     <div class="well" style="margin-top: 50px; margin-left: 30%; margin-right: 30%;">
-      <form action="" method="post">
-        <input type="text" name="username" placeholder="Username" style="width: 100%;" /> <br />
-        <input type="password" name="password" placeholder="Password" style="width: 100%;" /> <br />
-        <input type="submit" value="Login" style="width: 100%;" /> <br />
-      </form>
+    <div class="accordion" id="accordion2">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+            New empty database
+          </a>
+        </div>
+        <div id="collapseOne" class="accordion-body collapse">
+          <div class="accordion-inner">
+            <form action="/newdb_empty" method="post">
+              <p><input type="text" placeholder="Database name" name="dbname" style="width: 95%;" /></p>
+              <p><input type="text" placeholder="Database description" name="dbdesc" style="width: 95%;" /></p>
+              <p><input type="submit" value="Create" style="width: 100%;" /></p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+            New database from file
+          </a>
+        </div>
+        <div id="collapseTwo" class="accordion-body collapse">
+          <div class="accordion-inner">
+            <form action="/newdb_existing" method="post">
+              <p><input type="file" name="dbfile" style="width: 100%;" /></p>
+              <p><input type="submit" value="Create" style="width: 100%;" /></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </body>
 </html>

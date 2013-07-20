@@ -11,18 +11,27 @@
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/global.css" rel="stylesheet">
   </head>
 
   <body>
 
     <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
+      <div class="navbar-inner" style="/*background: none !important;*/">
         <div class="container-fluid">
           <a class="brand" href="/">FutaHub</a>
           <div class="nav-collapse collapse">
             {% if info['mode'] == 'public' %}
-            {% if info['logged_in'] %}<p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)
+            {% if info['logged_in'] %}
+              <div class="dropdown pull-right navbar-text">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">(+)</a>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li><a href="/newdb">Create a new database</a></li>
+                    <li><a href="/settings">Settings</a></li>
+                  </ul>
+              </div>
+              <p class="navbar-text pull-right">
+              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
             </p> {% else %} <p class="navbar-text pull-right">
               <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
             </p> {% endif %}
@@ -36,7 +45,6 @@
         </div>
       </div>
     </div>
-
     <div class="well" style="margin-top: 50px; margin-left: 10%; margin-right: 10%;">
       <h3> {{ message }} </h3>
     </div>
