@@ -260,10 +260,22 @@ else:
 					return redirect(url_for('page_index'))
 			return render_template('message.html', info=info(), message='Username/password incorrect')
 		return render_template('login.html', info=info())
-	@app.route('/newdb', methods=['GET', 'POST'])
+	@app.route('/newdb')
 	def newdb():
 		if 'username' in session:
 			return render_template('newdb.html', info=info())
+		else:
+			return redirect(url_for('page_index'))
+	@app.route('/newdb_empty', methods=['POST'])
+	def newdb_empty():
+		if 'username' in session:
+			assert(isinstance(request.form.get('dbname'), basestring))
+			assert(isinstance(request.form.get('dbdesc'), basestring))
+			for d in db['users'][session['username']]['dbs']:
+				if d['name'] == request.form['dbname']:
+					return render_template('message.html', info=info(), message='A database with that name already exists')
+			db['users'][session['username']]['dbs'].append({'name': request.form['dbname'], 'description': request.form['dbdesc'], 'count': 0, 'items': []})
+			return render_template('message.html', info=info(), message='Database created, connect to this server using Futaam to start editing it')
 		else:
 			return redirect(url_for('page_index'))
 	@app.route('/register', methods=['GET', 'POST'])
