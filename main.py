@@ -11,6 +11,9 @@ import os
 import random, string
 import hashlib
 import os, json, pickle
+import SocketServer
+from StringIO import StringIO
+import threading
 
 class colours():
     def __init__(self):
@@ -36,6 +39,95 @@ class colours():
         self.bold = ''
 colors = colours()
 ##############################################
+
+class rServer(SocketServer.BaseRequestHandler):
+	def setup(self):
+		print('[INFO] ' + repr(self.client_address) + ' connected')
+
+		try:
+			login = self.request.recv(4096).strip('\n').strip('\r')
+		except:
+			print('[INFO] '+ repr(self.client_addess) + ' has disconnected')
+			return
+
+		usern = login.split('/')[0]
+		passw = login.split('/')[1]
+		success = False
+		if usern in self.server.db['users']:
+			if passw == self.server.db['users'][usern]['password']:
+				success = True
+
+		if not success:
+			self.request.send('305 NOT AUTHORIZED')
+			print('[INFO] ' + repr(self.client_address) + ' has sent an invalid password and is now disconnected')
+			self.request.close()
+		else:
+			print('[INFO] ' + repr(self.client_address) + ' has successfully logged in')
+			self.request.send('OK')
+			self.logged_in = True
+			self.data = ''
+			self.usern = usern
+			self.passw = passw
+			self.curdb = 0
+	def handle(self):
+		#self.client_address[0] == ip (str)
+		#self.request == socket.socket
+		data = 'that4chanwolf is gentoo'
+		wholething = ''
+		while data:
+			try:
+				data = self.request.recv(4096)
+			except:
+				continue
+			if not self.logged_in: continue
+			self.data += data.replace('\n', '').replace('\r', '')
+			if self.data[-1:] == chr(4):
+				cmd = json.load(StringIO(self.data[:-1]))
+				self.data = ''
+
+				if cmd['cmd'] == 'pull':
+					res = {'cmd': cmd['cmd'], 'response': ''}
+					#self.server.db['users'][self.usern]['dbs'][self.curdb].reload()
+					res['response'] = json.dumps(self.server.db['users'][self.usern]['dbs'][self.curdb])
+					self.request.send(json.dumps(res) + chr(4))
+
+					print('[INFO] ' + repr(self.client_address) + ' has pulled the database')
+				elif cmd['cmd'] == 'push':
+					if self.server.db['users'][self.usern].get('readonly') == True:
+						self.request.send(json.dumps({'cmd': cmd['cmd'], 'response': 'Read-only database'}) + chr(4))
+						continue
+					self.server.db['users'][self.usern]['dbs'][self.curdb] = json.load(StringIO(cmd['args']))
+
+					res = {'cmd': cmd['cmd'], 'response': 'OK'}
+					self.request.send(json.dumps(res) + chr(4))
+
+					print('[INFO] ' + repr(self.client_address) + ' has pushed to the database')
+				elif cmd['cmd'] == 'save':
+					#if readonly:
+					#	self.request.send(json.dumps({'cmd': cmd['cmd'], 'response': 'Read-only database'}) + chr(4))
+					#	continue
+					#self.server.db['users'][self.usern]['dbs'][self.curdb].save()
+
+					res = {'cmd': cmd['cmd'], 'response': 'OK'}
+					self.request.send(json.dumps(res) + chr(4))
+
+					print('[INFO] ' + repr(self.client_address) + ' has saved the database')
+				elif cmd['cmd'] == 'sdb':
+					try:
+						self.curdb += 1
+						repr(self.server.db['users'][self.usern]['dbs'][self.curdb])
+					except IndexError:
+						self.curdb = 0
+
+					res = {'cmd': cmd['cmd'], 'response': 'OK'}
+					self.request.send(json.dumps(res) + chr(4))
+
+					print('[INFO] ' + repr(self.client_address) + ' has switched to the next database')
+				continue
+
+	def finish(self):
+		print('[INFO] A client has disconnected')
+###########################################################
 
 class streamWrapper(object):
 	def __init__(self, out):
@@ -199,7 +291,15 @@ else:
 
 			session['username'] = request.form['username']
 			return render_template('message.html', info=info(), message=u'✔ Registered')
-		return render_template('register.html', info=info())		
+		return render_template('register.html', info=info())
+
+	def serverThread():
+		rserver = SocketServer.ThreadingTCPServer(('', 8500), rServer)
+		rserver.db = db
+		rserver.serve_forever()
+	thread = threading.Thread(target=serverThread)
+	thread.setDaemon(True)
+	thread.start()
 
 @app.route('/ajax/entry/<id>')
 def ajax_entry(id):
