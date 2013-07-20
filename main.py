@@ -133,7 +133,7 @@ if not reload():
 	exit()
 
 if '--test' in argv:
-	db = {'users': {'test': {'username': 'test', 'password': '03edf7f5dd7ed2e344a3b1f2ec16c0291902d81fcc60eabc61e35ce61ce53f45f4d6b0e809b36771e75caad552377296b50c359d299d5e79e680848b2aec06ee',
+	db = {'users': {'test': {'username': 'test', 'password': 'aa0be1cfae626f5d8b03825011df6261e282ae8f3725725e886d190eef148841',
 	'dbs': [{"count": 0, "items": [], "name": "el db", "description": "lel fgt"}]}}}
 
 mal = utils.MALWrapper()
@@ -175,7 +175,7 @@ else:
 
 			user = db['users'].get(request.form.get('username'))
 			if user != None:
-				if user['password'] == hashlib.sha512(request.form.get('password')).hexdigest():
+				if user['password'] == hashlib.sha256(request.form.get('password')).hexdigest():
 					session['username'] = request.form['username']
 					return redirect(url_for('page_index'))
 			return render_template('message.html', info=info(), message='Username/password incorrect')
@@ -194,7 +194,7 @@ else:
 			if request.form['username'] in db['users']:
 				return render_template('message.html', info=info(), message='User already exists.')
 
-			db['users'][request.form['username']] = {'username': request.form['username'], 'password': hashlib.sha512(request.form['password']).hexdigest(),
+			db['users'][request.form['username']] = {'username': request.form['username'], 'password': hashlib.sha256(request.form['password']).hexdigest(),
 			'dbs': []}
 
 			session['username'] = request.form['username']
