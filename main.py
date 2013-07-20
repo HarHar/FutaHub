@@ -42,12 +42,9 @@ colors = colours()
 
 class rServer(SocketServer.BaseRequestHandler):
 	def setup(self):
-		print('[INFO] ' + repr(self.client_address) + ' connected')
-
 		try:
 			login = self.request.recv(4096).strip('\n').strip('\r')
 		except:
-			print('[INFO] '+ repr(self.client_addess) + ' has disconnected')
 			return
 
 		usern = login.split('/')[0]
@@ -78,7 +75,7 @@ class rServer(SocketServer.BaseRequestHandler):
 			try:
 				data = self.request.recv(4096)
 			except:
-				continue
+				return
 			if not self.logged_in: continue
 			self.data += data.replace('\n', '').replace('\r', '')
 			if self.data[-1:] == chr(4):
@@ -88,10 +85,11 @@ class rServer(SocketServer.BaseRequestHandler):
 				if cmd['cmd'] == 'pull':
 					res = {'cmd': cmd['cmd'], 'response': ''}
 					#self.server.db['users'][self.usern]['dbs'][self.curdb].reload()
-					res['response'] = json.dumps(self.server.db['users'][self.usern]['dbs'][self.curdb])
+					if len(self.server.db['users'][self.usern]['dbs']) == 0:
+						res['response'] = 'err: No databases available, you should first create one on the website'
+					else:
+						res['response'] = json.dumps(self.server.db['users'][self.usern]['dbs'][self.curdb])
 					self.request.send(json.dumps(res) + chr(4))
-
-					print('[INFO] ' + repr(self.client_address) + ' has pulled the database')
 				elif cmd['cmd'] == 'push':
 					if self.server.db['users'][self.usern].get('readonly') == True:
 						self.request.send(json.dumps({'cmd': cmd['cmd'], 'response': 'Read-only database'}) + chr(4))
@@ -100,18 +98,10 @@ class rServer(SocketServer.BaseRequestHandler):
 
 					res = {'cmd': cmd['cmd'], 'response': 'OK'}
 					self.request.send(json.dumps(res) + chr(4))
-
-					print('[INFO] ' + repr(self.client_address) + ' has pushed to the database')
 				elif cmd['cmd'] == 'save':
-					#if readonly:
-					#	self.request.send(json.dumps({'cmd': cmd['cmd'], 'response': 'Read-only database'}) + chr(4))
-					#	continue
-					#self.server.db['users'][self.usern]['dbs'][self.curdb].save()
-
+					#doesn't do anything
 					res = {'cmd': cmd['cmd'], 'response': 'OK'}
 					self.request.send(json.dumps(res) + chr(4))
-
-					print('[INFO] ' + repr(self.client_address) + ' has saved the database')
 				elif cmd['cmd'] == 'sdb':
 					try:
 						self.curdb += 1
@@ -121,12 +111,10 @@ class rServer(SocketServer.BaseRequestHandler):
 
 					res = {'cmd': cmd['cmd'], 'response': 'OK'}
 					self.request.send(json.dumps(res) + chr(4))
-
-					print('[INFO] ' + repr(self.client_address) + ' has switched to the next database')
 				continue
 
 	def finish(self):
-		print('[INFO] A client has disconnected')
+		pass
 ###########################################################
 
 class streamWrapper(object):
