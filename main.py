@@ -363,7 +363,7 @@ else:
 		return notfound()
 
 	@app.route('/<path:lel>')
-	def notfound(lel):
+	def notfound(lel=''):
 		return render_template('404.html', info=info(), what=random.choice(['futas', 'chickens', 'futas', 'chickens', 'anons', 'kittens', 'rabbits', 'roosters', 'top lel'])), 404
 
 	def serverThread():
