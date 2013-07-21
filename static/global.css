@@ -1,3 +1,13 @@
   a {
     outline: 0 !important;
   }
+
+  .spoiler {
+  	color: #000;
+  	background: #000;
+  }
+
+  .spoiler:hover {
+  	color: none;
+  	background: none;
+  }
