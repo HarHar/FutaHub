@@ -15,6 +15,7 @@ import SocketServer
 from StringIO import StringIO
 import threading
 import time
+import random
 
 class colours():
     def __init__(self):
@@ -353,6 +354,17 @@ else:
 			session['username'] = request.form['username']
 			return render_template('message.html', info=info(), message=u'✔ Registered')
 		return render_template('register.html', info=info())
+	@app.route('/<user>')
+	def user_page(user):
+		return notfound()
+
+	@app.route('/<user>/<db>')
+	def db_page(user, db):
+		return notfound()
+
+	@app.route('/<path:lel>')
+	def notfound(lel):
+		return render_template('404.html', info=info(), what=random.choice(['futas', 'chickens', 'futas', 'chickens', 'anons', 'kittens', 'rabbits', 'roosters', 'top lel'])), 404
 
 	def serverThread():
 		rserver = SocketServer.ThreadingTCPServer(('0.0.0.0', 8500), rServer)
