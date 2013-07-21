@@ -278,6 +278,29 @@ else:
 			return render_template('message.html', info=info(), message='Database created, connect to this server using Futaam to start editing it')
 		else:
 			return redirect(url_for('page_index'))
+	@app.route('/newdb_existing', methods=['POST'])
+	def newdb_existing():
+		if 'username' in session:
+			assert(request.files.get('dbfile') != None)
+			#for d in db['users'][session['username']]['dbs']:
+			#	if d['name'] == request.form['dbname']:
+			#		return render_template('message.html', info=info(), message='A database with that name already exists')
+			#db['users'][session['username']]['dbs'].append({'name': request.form['dbname'], 'description': request.form['dbdesc'], 'count': 0, 'items': []})
+			f = request.files['dbfile'].read().split('\n')
+			if f[0] != '[json]':
+				return render_template('message.html', info=info(), message='Error: not a Futaam file')
+			jsondb = json.loads(f[1])
+			sanitized = {'items': []}
+			sanitized['name'] = jsondb['name'][:128]
+			sanitized['description'] = jsondb['description'][:256]
+			for i, entry in enumerate(jsondb['items']):
+				e = jsondb['items'][i]
+				sanitized['items'].append({'status': e['status'][0], 'hash': e['hash'][:128], 'name': e['name'][:128], 'obs': e['obs'][:128], 'lastwatched': e['lastwatched'][:64], 'genre': e['genre'][:256], 'aid': e['aid'], 'type': e['type'][:12], 'id': e['id']})
+
+			db['users'][session['username']]['dbs'].append(sanitized)
+			return render_template('message.html', info=info(), message='Database created, connect to this server using Futaam to start editing it')
+		else:
+			return redirect(url_for('page_index'))
 	@app.route('/register', methods=['GET', 'POST'])
 	def register():
 		if 'username' in session:
@@ -300,8 +323,9 @@ else:
 		return render_template('register.html', info=info())
 
 	def serverThread():
-		rserver = SocketServer.ThreadingTCPServer(('', 8500), rServer)
+		rserver = SocketServer.ThreadingTCPServer(('0.0.0.0', 8500), rServer)
 		rserver.db = db
+		rserver.allow_reuse_address = True
 		rserver.serve_forever()
 	thread = threading.Thread(target=serverThread)
 	thread.setDaemon(True)
@@ -340,4 +364,5 @@ def ajax_entry(id):
 if __name__ == '__main__':
     app.debug = True if '--debug' in argv else False
     app.secret_key = ''.join([random.choice(string.letters) for x in xrange(0, 30)])
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     app.run(host='0.0.0.0')
