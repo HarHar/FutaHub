@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>FutaHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/userprofile.js"></script>
+
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/global.css" rel="stylesheet">
+    <link href="/static/profile.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner" style="/*background: none !important;*/">
+        <div class="container-fluid">
+          <a class="brand" href="/">FutaHub</a>
+          <div class="nav-collapse collapse">
+            {% if info['mode'] == 'public' %}
+            {% if info['logged_in'] %}
+              <div class="dropdown pull-right navbar-text">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">(+)</a>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li><a href="/newdb">Create a new database</a></li>
+                    <li><a href="/settings">Settings</a></li>
+                  </ul>
+              </div>
+              <p class="navbar-text pull-right">
+              Logged in as <a href="/{{ info['username'] }}" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
+            </p> {% else %} <p class="navbar-text pull-right">
+              <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
+            </p> {% endif %}
+
+             {% endif %}
+            <!--<ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+            </ul> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <a href="#" onclick="toggle_info(); return false;"><img src="/static/back.png" style="width: 20px; height: 20px; position: fixed; margin-top: 30px; margin-left: -1px;" id="butan" /></a>
+    <div style="margin-top: 60px; padding-left: 20px; float: left; position: fixed;" id="profile_info">
+      <a href="http://gravatar.com/emails/" title="Change your avatar at gravatar!"> <img src="http://gravatar.com/avatar/{{ info['db']['users'][user]['email_hash'] }}?s=210" style="padding: 5px; border: 1px solid #AABAC5; margin-bottom: 10px;" /> </a><br />
+      <span style="font-size: 22px; font-weight: bold;">{{ info['db']['users'][user]['username'] }}</span> <br />
+      <span style="color: #464646">{{ info['db']['users'][user]['name'] }}</span> 
+
+      <hr style="width: 210px;" />
+
+      {% if info['db']['users'][user]['place'] != '' %}
+        {{ info['db']['users'][user]['place'] }}
+        <div class='small_linebreak'>&nbsp;</div>
+      {% endif %}
+      {% if info['db']['users'][user]['email'] != '' %}
+        {{info['db']['users'][user]['email'] }}
+        <div class='small_linebreak'>&nbsp;</div>
+      {% endif %}
+      {% if info['db']['users'][user]['url'] != '' %}
+        {{ info['db']['users'][user]['url'] }}
+        <div class='small_linebreak'>&nbsp;</div>
+      {% endif %}
+      <p><span style="color: #777777">User joined on</span> {{ info['db']['users'][user]['joined'] }}</p>
+    </div>
+
+    <div>
+
+    <div style="background-color: #FFFFFF; height: 0px; padding-left: 250px; position: fixed;" id="tbs">
+      <ul class="nav nav-tabs" id="myTab" style="padding-top: 60px; border-bottom: none !important; background-color: #FFFFFF">
+        <li {% if sdb == -1 %}class="active"{% endif %}><a href="#dbs" onclick="$(this).tab('show'); return false;">Databases</a></li>
+        <li {% if sdb != -1 %}class="active"{% endif %}><a href="#entries" {% if sdb != -1 %}onclick="$(this).tab('show'); return false;"{% endif %}{% if sdb == -1 %} style="cursor: default;"{% endif %}>Entries</a></li>
+        <li><a href="#activity" onclick="$(this).tab('show'); return false;">Activity</a></li>
+        <li><a href="#comments" onclick="$(this).tab('show'); return false;">Comments</a></li>
+      </ul>
+    </div>
+
+
+    <div class="tab-content" style="padding-top: 100px; padding-left: 250px;" id="cont">
+      <div class="tab-pane {% if sdb == -1 %}active{% endif %}" id="dbs" style="margin-left: 30px; margin-top: 20px;">
+        {% for db in info['db']['users'][user]['dbs'] %}
+          <a href="/{{ user }}/{{ db['name'] }}" style="font-size: 24px; font-decoration: bold;">{{ db['name'] }}</a> <br />
+          <h4>&nbsp;&nbsp;{{ db['description'] }}</h4>
+          <br />
+        {% endfor %}
+      </div>
+      <div class="tab-pane {% if sdb != -1 %}active{% endif %}" id="entries">
+
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="sidebar-nav" style="width: 300px;">
+            <ul class="nav nav-list">
+              {% if leng == 0 %}
+                No entries found, add entries by connecting to this server using Futaam
+              {% else %}
+
+              {% for item in cdb['items'] %}
+
+              {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', 0, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
+
+              {% endfor %}
+
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+        {% if leng != 0 %}
+        <div class="span9" style="margin-left: 320px; position: fixed;">
+          <div class="breadcrumb" id="dcontent" style="width: 100%;">
+          </div>
+        </div>
+        {% endif %}
+    </div>
+
+    </div>
+      <div class="tab-pane" id="activity">...</div>
+      <div class="tab-pane" id="comments">...</div>
+    </div>
+    </div>
+
+  </body>
+</html>

@@ -31,7 +31,7 @@
                   </ul>
               </div>
               <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
+              Logged in as <a href="/{{ info['username'] }}" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
             </p> {% else %} <p class="navbar-text pull-right">
               <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
             </p> {% endif %}
@@ -48,10 +48,20 @@
 
     <div class="well" style="margin-top: 50px; margin-left: 30%; margin-right: 30%;">
       <form action="" method="post">
-        <input type="text" name="username" placeholder="Username" style="width: 95%;" /> <br />
-        <input type="password" name="password" placeholder="Password" style="width: 95%;" /> <br />
-        <input type="password" name="password2" placeholder="Repeat password" style="width: 95%;" /> <br />
-        <input type="submit" value="Login" style="width: 100%;" /> <br />
+        <p class="nav-header">Required:</p>
+        <div style="padding-left: 15px; padding-right: 15px;">
+          <input type="text" name="username" placeholder="Username" style="width: 95%;" /> <br />
+          <input type="password" name="password" placeholder="Password" style="width: 95%;" /> <br />
+          <input type="password" name="password2" placeholder="Repeat password" style="width: 95%;" /> <br />
+          <input type="text" name="name" placeholder="Full name" style="width: 95%;" /> <br />
+        </div>
+        <p class="nav-header">Optional:</p>
+        <div style="padding-left: 15px; padding-right: 15px;">
+          <input type="text" name="email" placeholder="Email (for gravatar)" style="width: 95%;" /> <br />
+          <input type="text" name="place" placeholder="Where do you live?" style="width: 95%;" /> <br />
+          <input type="text" name="url" placeholder="Website or blog URL" style="width: 95%;" /> <br />
+          <input type="submit" value="Register" style="width: 30%;" /> <br />
+        </div>
       </form>
     </div>
   </body>

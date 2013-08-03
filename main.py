@@ -16,6 +16,7 @@ from StringIO import StringIO
 import threading
 import time
 import random
+import datetime
 
 class colours():
     def __init__(self):
@@ -247,6 +248,36 @@ if mode == 'private':
 	def page_index():
 		reload()
 		return render_template('profile.html', db=db, mode=mode)
+
+	@app.route('/ajax/entry/<id>')
+	def ajax_entry(id):
+		if not str(id).isdigit():
+			return '<h1>Entry not found</h1>', 404
+		elif int(id) >= len(db['items']):
+			return '<h1>Entry not found</h1>', 404
+
+		entry = deepcopy(db['items'][int(id)])
+		for item in entry:
+			entry[item] = cgi.escape(unicode(entry[item]))
+
+		if entry['type'] in ['anime', 'manga']:
+			return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
+				entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
+		elif entry['type'] == 'vn':
+			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
+			platforms = []
+			for platform in deep['platforms']:
+				names = {'lin': 'Linux', 'mac': 'Mac', 'win': 'Windows', 'and': 'Android', 'oth': 'Other', 'xb3': 'Xbox 360'}
+				if platform in names:
+					platform = names[platform]
+				else:
+					platform = platform[0].upper() + platform[1:]
+				platforms.append(platform)
+			deep['aliases'] = deep['aliases'].replace('\n', '')
+			deep['languages'] = '/'.join(deep['languages'])
+			return render_template('entry_details.html', entry=entry, deep=deep,
+				trstatus=utils.translated_status[entry['type']][entry['status']], platforms='/'.join(platforms),
+				aliases_len=len(deep['aliases']))
 else:
 	def info():
 		global db, session, mode
@@ -336,8 +367,15 @@ else:
 		if 'username' in session:
 			return render_template('message.html', info=info(), message='Already logged in')
 		if request.method == 'POST':
-			for field, ftype in (('username', basestring), ('password', basestring), ('password2', basestring)):
-				if isinstance(request.form.get(field), ftype) == False: return 'Invalid request'
+			for field in ['username', 'password', 'password2', 'name']: #required
+				if isinstance(request.form.get(field), basestring) == False: return 'Invalid request'
+				if request.form[field] == '':
+					return render_template('message.html', info=info(), message='Error: required field not filled')
+
+			views = []
+			for view in app.url_map.iter_rules(): views.append(view.endpoint.strip('/'))
+			if (request.form['username'] in views) or (request.form['username'].find('/') != -1):
+				return render_template('message.html', info=info(), message='Invalid username')
 
 			if request.form['password'] != request.form['password2']:
 				return render_template('message.html', info=info(), message='Passwords did not match.')
@@ -345,8 +383,19 @@ else:
 			if request.form['username'] in db['users']:
 				return render_template('message.html', info=info(), message='User already exists.')
 
+			email, place, url = '', '', ''
+			if request.form.get('email') != None:
+				email = request.form['email'][:64]
+			if request.form.get('place') != None:
+				place = request.form['place'][:32]
+			if request.form.get('url') != None:
+				url = request.form['url'][:32]
+
+			now = datetime.date.today()
+			joined = ("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())[now.month] + ' ' + str(now.day) + ', ' + str(now.year)
+
 			db['users'][request.form['username']] = {'username': request.form['username'], 'password': hashlib.sha256(request.form['password']).hexdigest(),
-			'dbs': []}
+			'dbs': [], 'email': email, 'email_hash': hashlib.md5(email).hexdigest(), 'place': place, 'url': url, 'name': request.form['name'][:32], 'joined': joined}
 
 			global lastchange
 			lastchange = time.time()
@@ -354,15 +403,61 @@ else:
 			session['username'] = request.form['username']
 			return render_template('message.html', info=info(), message=u'✔ Registered')
 		return render_template('register.html', info=info())
+
+	@app.route('/ajax/entry')
+	def public_ajax_entry():
+		entry_id = request.args.get('index', None)
+		user = request.args.get('user', None)
+		dbid = request.args.get('db', None)
+		if (entry_id is None) or (user is None) or (dbid is None):
+			return 'Invalid request'
+
+		entry = db['users'][user]['dbs'][int(dbid)]['items'][int(entry_id)]
+
+		entry = deepcopy(entry)
+		for item in entry:
+			entry[item] = cgi.escape(unicode(entry[item]))
+
+		if entry['type'] in ['anime', 'manga']:
+			return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
+				entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
+		elif entry['type'] == 'vn':
+			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
+			platforms = []
+			for platform in deep['platforms']:
+				names = {'lin': 'Linux', 'mac': 'Mac', 'win': 'Windows', 'and': 'Android', 'oth': 'Other', 'xb3': 'Xbox 360'}
+				if platform in names:
+					platform = names[platform]
+				else:
+					platform = platform[0].upper() + platform[1:]
+				platforms.append(platform)
+			deep['aliases'] = deep['aliases'].replace('\n', '')
+			deep['languages'] = '/'.join(deep['languages'])
+			return render_template('entry_details.html', entry=entry, deep=deep,
+				trstatus=utils.translated_status[entry['type']][entry['status']], platforms='/'.join(platforms),
+				aliases_len=len(deep['aliases']))
+
 	@app.route('/<user>')
+	@app.route('/<user>/')
 	def user_page(user):
+		if (user in db['users']):
+			return render_template('userprofile.html', info=info(), user=user, sdb=-1, cdb=None, leng=0)
 		return notfound()
 
-	@app.route('/<user>/<db>')
-	def db_page(user, db):
+	@app.route('/<user>/<dbase>')
+	def db_page(user, dbase):
+		if (user in db['users']):
+			cdb = None
+			for ccdb in db['users'][user]['dbs']:
+				if ccdb['name'] == dbase:
+					cdb = ccdb
+			if cdb is None:
+				return notfound()
+			return render_template('userprofile.html', info=info(), user=user, sdb=db, cdb=cdb, leng=len(cdb['items']))
 		return notfound()
 
 	@app.route('/<path:lel>')
+	@app.errorhandler(404)
 	def notfound(lel=''):
 		return render_template('404.html', info=info(), what=random.choice(['futas', 'chickens', 'futas', 'chickens', 'anons', 'kittens', 'rabbits', 'roosters', 'top lel'])), 404
 
@@ -374,36 +469,6 @@ else:
 	thread = threading.Thread(target=serverThread)
 	thread.setDaemon(True)
 	thread.start()
-
-@app.route('/ajax/entry/<id>')
-def ajax_entry(id):
-	if not str(id).isdigit():
-		return '<h1>Entry not found</h1>', 404
-	elif int(id) >= len(db['items']):
-		return '<h1>Entry not found</h1>', 404
-
-	entry = deepcopy(db['items'][int(id)])
-	for item in entry:
-		entry[item] = cgi.escape(unicode(entry[item]))
-
-	if entry['type'] in ['anime', 'manga']:
-		return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
-			entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
-	elif entry['type'] == 'vn':
-		deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
-		platforms = []
-		for platform in deep['platforms']:
-			names = {'lin': 'Linux', 'mac': 'Mac', 'win': 'Windows', 'and': 'Android', 'oth': 'Other', 'xb3': 'Xbox 360'}
-			if platform in names:
-				platform = names[platform]
-			else:
-				platform = platform[0].upper() + platform[1:]
-			platforms.append(platform)
-		deep['aliases'] = deep['aliases'].replace('\n', '')
-		deep['languages'] = '/'.join(deep['languages'])
-		return render_template('entry_details.html', entry=entry, deep=deep,
-			trstatus=utils.translated_status[entry['type']][entry['status']], platforms='/'.join(platforms),
-			aliases_len=len(deep['aliases']))
 
 if __name__ == '__main__':
     app.debug = True if '--debug' in argv else False

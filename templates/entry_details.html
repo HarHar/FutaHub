@@ -12,7 +12,8 @@
 	{% endif %}
 	<b>Type: </b>{{ deep['type'] }}<br />
 	<b>Classification: </b>{{ deep['classification'] }}<br />
-	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
+	<b>Synopsis: </b>{% autoescape false %}
+{{ deep['synopsis'] }}{% endautoescape %}<br />
 	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% elif entry['type'] == 'manga' %}
 	<img src="{{ deep['image_url'] }}" style="float: left; padding-right: 10px;" />
@@ -21,7 +22,8 @@
 	<b>Last chapter/volume read: </b>{{ entry['lastwatched'] }}<br />
 	<b>Chapters/volumes: </b>{{ deep['chapters'] }}/{{ deep['volumes'] }}<br />
 	<b>Type: </b>{{ deep['type'] }}<br />
-	<b>Synopsis: </b>{{ deep['synopsis'] }}<br />
+	<b>Synopsis: </b>{% autoescape false %}
+{{ deep['synopsis'] }}{% endautoescape %}<br />
 	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% elif entry['type'] == 'vn' %}
 	<img src="{{ deep['image'] }}" style="float: left; padding-right: 10px;" />
@@ -34,6 +36,7 @@
 	<b>Platforms: </b>{{ platforms }}<br />
 	<b>Released: </b>{{ deep['released'] }}<br />
 	<b>Languages: </b>{{ deep['languages'] }}<br />
-	<b>Synopsis: </b>{{ deep['description'] }}<br />
+	<b>Synopsis: </b>{% autoescape false %}
+{{ deep['description'] }}{% endautoescape %}<br />
 	<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 {% endif %}

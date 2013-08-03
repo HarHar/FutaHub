@@ -33,7 +33,7 @@
                   </ul>
               </div>
               <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
+              Logged in as <a href="/{{ info['username'] }}" class="navbar-link">{{ info['username'] }}</a> (<a href="/logout" class="navbar-link">logout</a>)&nbsp;
             </p> {% else %} <p class="navbar-text pull-right">
               <a href="/login" class="navbar-link">login</a> or <a href="/register" class="navbar-link">register</a>
             </p> {% endif %}
