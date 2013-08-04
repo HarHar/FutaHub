@@ -353,7 +353,7 @@ else:
 			sanitized['description'] = jsondb['description'][:256]
 			for i, entry in enumerate(jsondb['items']):
 				e = jsondb['items'][i]
-				sanitized['items'].append({'status': e['status'][0], 'hash': e['hash'][:128], 'name': e['name'][:128], 'obs': e['obs'][:128], 'lastwatched': e['lastwatched'][:64], 'genre': e['genre'][:256], 'aid': e['aid'], 'type': e['type'][:12], 'id': e['id']})
+				sanitized['items'].append({'status': e['status'][0], 'hash': e['hash'][:128], 'name': e['name'][:128], 'obs': e['obs'][:128], 'lastwatched': str(e['lastwatched'])[:64], 'genre': e['genre'][:256], 'aid': e['aid'], 'type': e['type'][:12], 'id': e['id']})
 
 			db['users'][session['username']]['dbs'].append(sanitized)
 
@@ -448,12 +448,13 @@ else:
 	def db_page(user, dbase):
 		if (user in db['users']):
 			cdb = None
-			for ccdb in db['users'][user]['dbs']:
+			for i, ccdb in enumerate(db['users'][user]['dbs']):
 				if ccdb['name'] == dbase:
 					cdb = ccdb
+					n = i
 			if cdb is None:
 				return notfound()
-			return render_template('userprofile.html', info=info(), user=user, sdb=db, cdb=cdb, leng=len(cdb['items']))
+			return render_template('userprofile.html', info=info(), user=user, sdb=db, cdb=cdb, leng=len(cdb['items']), n=n)
 		return notfound()
 
 	@app.route('/<path:lel>')
@@ -476,6 +477,7 @@ if __name__ == '__main__':
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     try:
     	app.run(host='0.0.0.0')
-    except:
+    except Exception, e:
     	save()
+    	print str(e)
     	os.kill(os.getpid(), 9)

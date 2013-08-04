@@ -103,7 +103,7 @@
 
               {% for item in cdb['items'] %}
 
-              {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', 0, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
+              {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', {{ n }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
 
               {% endfor %}
 
