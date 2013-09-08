@@ -261,8 +261,9 @@ if mode == 'private':
 			entry[item] = cgi.escape(unicode(entry[item]))
 
 		if entry['type'] in ['anime', 'manga']:
-			return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
-				entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
+			deep = mal.details(entry['aid'], entry['type'])
+			characters = mal.getCharacterList(entry['aid'], deep['title'], entry['type'])
+			return render_template('entry_details.html', entry=entry, deep=deep, trstatus=utils.translated_status[entry['type']][entry['status']], characters=characters)
 		elif entry['type'] == 'vn':
 			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
 			platforms = []
@@ -404,6 +405,15 @@ else:
 			return render_template('message.html', info=info(), message=u'✔ Registered')
 		return render_template('register.html', info=info())
 
+	@app.route('/ajax/biography')
+	def public_ajax_bio():
+		name = request.args.get('name', None)
+		cid = request.args.get('id', None)
+		if (name is None) or (cid is None):
+			return 'Invalid request'
+
+		return render_template('bio.html', info=mal.getCharacterInfo(name, cid, raw=True))
+
 	@app.route('/ajax/entry')
 	def public_ajax_entry():
 		entry_id = request.args.get('index', None)
@@ -419,8 +429,10 @@ else:
 			entry[item] = cgi.escape(unicode(entry[item]))
 
 		if entry['type'] in ['anime', 'manga']:
-			return render_template('entry_details.html', entry=entry, deep=mal.details(entry['aid'],
-				entry['type']), trstatus=utils.translated_status[entry['type']][entry['status']])
+			deep = mal.details(entry['aid'], entry['type'])
+			characters = mal.getCharacterList(entry['aid'], deep['title'], entry['type'])
+			return render_template('entry_details.html', entry=entry, deep=deep,
+			 trstatus=utils.translated_status[entry['type']][entry['status']], characters=characters)
 		elif entry['type'] == 'vn':
 			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
 			platforms = []
@@ -476,7 +488,7 @@ if __name__ == '__main__':
     app.secret_key = ''.join([random.choice(string.letters) for x in xrange(0, 30)])
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     try:
-    	app.run(host='0.0.0.0')
+    	app.run(host='0.0.0.0', port=5000)
     except Exception, e:
     	save()
     	print str(e)

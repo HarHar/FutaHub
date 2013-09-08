@@ -48,8 +48,8 @@
       </div>
     </div>
     
-    <a href="#" onclick="toggle_info(); return false;"><img src="/static/back.png" style="width: 20px; height: 20px; position: fixed; margin-top: 30px; margin-left: -1px;" id="butan" /></a>
-    <div style="margin-top: 60px; padding-left: 20px; float: left; position: fixed;" id="profile_info">
+    <a href="#" onclick="toggle_info(); return false;"><span style="width: auto; height: 20px; position: fixed; margin-top: 40px; margin-left: -1px; color: #BDBDBD; margin-bottom: -10px; margin-left: 20px; z-index: 1000;" id="butan" onMouseOver="this.style.color='#8E8E8E'" onMouseOut="this.style.color='#BDBDBD'">[hide panel]</a>
+    <div style="margin-top: 60px; margin-left: 20px; float: left; position: fixed;" id="profile_info">
       <a href="http://gravatar.com/emails/" title="Change your avatar at gravatar!"> <img src="http://gravatar.com/avatar/{{ info['db']['users'][user]['email_hash'] }}?s=210" style="padding: 5px; border: 1px solid #AABAC5; margin-bottom: 10px;" /> </a><br />
       <span style="font-size: 22px; font-weight: bold;">{{ info['db']['users'][user]['username'] }}</span> <br />
       <span style="color: #464646">{{ info['db']['users'][user]['name'] }}</span> 
@@ -73,7 +73,7 @@
 
     <div>
 
-    <div style="background-color: #FFFFFF; height: 0px; padding-left: 250px; position: fixed;" id="tbs">
+    <div style="background-color: #FFFFFF; height: 0px; padding-left: 250px; padding-top: 0px; position: absolute;" id="tbs">
       <ul class="nav nav-tabs" id="myTab" style="padding-top: 60px; border-bottom: none !important; background-color: #FFFFFF">
         <li {% if sdb == -1 %}class="active"{% endif %}><a href="#dbs" onclick="$(this).tab('show'); return false;">Databases</a></li>
         <li {% if sdb != -1 %}class="active"{% endif %}><a href="#entries" {% if sdb != -1 %}onclick="$(this).tab('show'); return false;"{% endif %}{% if sdb == -1 %} style="cursor: default;"{% endif %}>Entries</a></li>
@@ -112,7 +112,7 @@
           </div>
         </div>
         {% if leng != 0 %}
-        <div class="span9" style="margin-left: 320px; position: fixed;">
+        <div class="span9" style="margin-left: 320px; position: absolute;" id="dc">
           <div class="breadcrumb" id="dcontent" style="width: 100%;">
           </div>
         </div>

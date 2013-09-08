@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import json
 import urllib
@@ -44,43 +44,43 @@ vn_translated_status = {'q': 'To play', 'c': 'Currently playing', 'h': 'On hold'
 translated_status = {'anime': anime_translated_status, 'manga': manga_translated_status, 'vn': vn_translated_status}
 
 def showImage(url):
-    remote_fo = urllib2.urlopen(url)
-    with open('tempfile.' + url.split('.')[len(url.split('.'))-1], 'wb') as local_fo:
-        shutil.copyfileobj(remote_fo, local_fo)
-    im = Image.open('tempfile.' + url.split('.')[len(url.split('.'))-1])
-    im.show()
+	remote_fo = urllib2.urlopen(url)
+	with open('tempfile.' + url.split('.')[len(url.split('.'))-1], 'wb') as local_fo:
+		shutil.copyfileobj(remote_fo, local_fo)
+	im = Image.open('tempfile.' + url.split('.')[len(url.split('.'))-1])
+	im.show()
 
 class colors():
-    def __init__(self):
-        self.enable()
-    def enable(self):
-    	if os.name == 'nt':
-    		self.disable()
-    		return
-        self.header = '\033[95m'
-        self.blue = '\033[94m'
-        self.green = '\033[92m'
-        self.warning = '\033[93m'
-        self.fail = '\033[91m'
-        self.bold = '\033[1m'
-        self.default = '\033[0m'
-    def disable(self):
-        self.header = ''
-        self.blue = ''
-        self.green = ''
-        self.warning = ''
-        self.fail = ''
-        self.default = ''
-        self.bold = ''
+	def __init__(self):
+		self.enable()
+	def enable(self):
+		if os.name == 'nt':
+			self.disable()
+			return
+		self.header = '\033[95m'
+		self.blue = '\033[94m'
+		self.green = '\033[92m'
+		self.warning = '\033[93m'
+		self.fail = '\033[91m'
+		self.bold = '\033[1m'
+		self.default = '\033[0m'
+	def disable(self):
+		self.header = ''
+		self.blue = ''
+		self.green = ''
+		self.warning = ''
+		self.fail = ''
+		self.default = ''
+		self.bold = ''
 
 def remove_html_tags(data):
-    p = re.compile(r'<.*?>')
-    return p.sub('', data)
+	p = re.compile(r'<.*?>')
+	return p.sub('', data)
 
 def HTMLEntitiesToUnicode(text):
-    """Converts HTML entities to unicode.  For example '&amp;' becomes '&'."""
-    text = unicode(BeautifulStoneSoup(text, convertEntities=BeautifulStoneSoup.ALL_ENTITIES))
-    return text
+	"""Converts HTML entities to unicode.  For example '&amp;' becomes '&'."""
+	text = unicode(BeautifulStoneSoup(text, convertEntities=BeautifulStoneSoup.ALL_ENTITIES))
+	return text
 
 class NyaaWrapper(object):
 	def search(self, term):
@@ -165,22 +165,22 @@ class MALWrapper(object):
 		if not stype in ['anime', 'manga']:
 			raise TypeError('second parameter must be either "anime" or "manga"')
 
-		url = 'http://myanimelist.net/'+ stype +'/' + str(animeId) + '/' + animeTitle + '/characters'
+		url = 'http://myanimelist.net/'+ stype +'/' + str(animeId) + '/' + urllib.quote(animeTitle) + '/characters'
 		c = urllib2.urlopen(url).read().replace("'+'", '').replace("' + '", '')
 		bs = BeautifulSoup(c)
 
 		i = 0
 		girls = []
-		for t in bs.findAll('td')[11:]:
-		        try:
-		                spl = t.getText().split('\n')
-		                if spl[1] in girls:
-		                	continue
-		                if spl[2].find('Main') != -1 or spl[2].find('Supporting') != -1:
-		                        girls.append(spl[1])
-		        except:
-		                pass
-		        i += 1
+		for t in bs.findAll('td'):
+			try:
+				spl = t.getText().split('\n')
+				if spl[1] in girls:
+					continue
+				if spl[2].find('Main') != -1 or spl[2].find('Supporting') != -1:
+					girls.append(spl[1])
+			except:
+				pass
+			i += 1
 
 		d = []
 		for b in girls:
@@ -190,19 +190,34 @@ class MALWrapper(object):
 			d.append(b.lstrip().rstrip().strip('\n'))	        
 
 		ids = []
-		for l in bs.findAll('a'):
+		i = 0
+		girls = []
+		for t in bs.findAll('td'):
 			try:
-				if l.get('href').find('character') == -1: continue
-			except:
-				continue
-			for g in girls:
-				try:
-					if l.get('href').split('/')[4] in ids:
-						continue
-					if l.getText() == g:
-						ids.append(l.get('href').split('/')[4])
-				except:
+				spl = t.getText().split('\n')
+				if spl[1] in girls:
 					continue
+				if spl[2].find('Main') != -1 or spl[2].find('Supporting') != -1:
+					cid = t.findAll('a')[0].get('href').split('/')[4]
+					ids.append(cid)
+					girls.append(spl[1])
+			except:
+				pass
+			i += 1
+
+		#for l in bs.findAll('a'):
+		#	try:
+		#		if l.get('href').find('character') == -1: continue
+		#	except:
+		#		continue
+		#	for g in girls:
+		#		try:
+		#			if l.get('href').split('/')[4] in ids:
+		#				continue
+		#			if l.getText() == g:
+		#				ids.append(l.get('href').split('/')[4])
+		#		except:
+		#			continue
 
 		thumbnails = []
 		for img in bs.findAll('div'):
@@ -225,7 +240,7 @@ class MALWrapper(object):
 					if img.find('a').get('href').find(g.split(' ')[1]) != -1:
 						thumbnails.append(img.find('a').find('img').get('src'))
 				except:
-					continue		
+					continue
 
 		return (d, ids, thumbnails)
 	@staticmethod
