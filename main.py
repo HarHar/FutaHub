@@ -97,7 +97,16 @@ class rServer(SocketServer.BaseRequestHandler):
 					if self.server.db['users'][self.usern].get('readonly') == True:
 						self.request.send(json.dumps({'cmd': cmd['cmd'], 'response': 'Read-only database'}) + chr(4))
 						continue
-					self.server.db['users'][self.usern]['dbs'][self.curdb] = json.load(StringIO(cmd['args']))
+					jsondb = json.load(StringIO(cmd['args']))
+
+					sanitized = {'items': []}
+					sanitized['name'] = jsondb['name'][:128]
+					sanitized['description'] = jsondb['description'][:256]
+					sanitized['count'] = int(str(jsondb['count'])[:128])
+					for i, e in enumerate(jsondb['items']):
+						sanitized['items'].append({'status': e['status'][0], 'hash': e['hash'][:128], 'name': e['name'][:128], 'obs': e['obs'][:128], 'lastwatched': str(e['lastwatched'])[:64], 'genre': e['genre'][:256], 'aid': e['aid'], 'type': e['type'][:12], 'id': e['id']})
+
+					self.server.db['users'][self.usern]['dbs'][self.curdb] = sanitized
 
 					res = {'cmd': cmd['cmd'], 'response': 'OK'}
 					self.request.send(json.dumps(res) + chr(4))
