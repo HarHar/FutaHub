@@ -362,8 +362,7 @@ else:
 			sanitized['name'] = jsondb['name'][:128]
 			sanitized['description'] = jsondb['description'][:256]
 			sanitized['count'] = int(str(jsondb['count'])[:128])
-			for i, entry in enumerate(jsondb['items']):
-				e = jsondb['items'][i]
+			for i, e in enumerate(jsondb['items']):
 				sanitized['items'].append({'status': e['status'][0], 'hash': e['hash'][:128], 'name': e['name'][:128], 'obs': e['obs'][:128], 'lastwatched': str(e['lastwatched'])[:64], 'genre': e['genre'][:256], 'aid': e['aid'], 'type': e['type'][:12], 'id': e['id']})
 
 			db['users'][session['username']]['dbs'].append(sanitized)
