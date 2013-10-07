@@ -246,7 +246,8 @@ if not reload():
 	exit()
 
 if '--test' in argv:
-	db = {'users': {'test': {'username': 'test', 'password': 'aa0be1cfae626f5d8b03825011df6261e282ae8f3725725e886d190eef148841',
+	#Password is "test"
+	db = {'users': {'test': {'username': 'test', 'password': '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
 	'dbs': [{"count": 0, "items": [], "name": "el db", "description": "lel fgt"}]}}}
 
 mal = utils.MALWrapper()
