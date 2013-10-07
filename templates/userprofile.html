@@ -65,7 +65,7 @@
         <div class='small_linebreak'>&nbsp;</div>
       {% endif %}
       {% if info['db']['users'][user]['url'] != '' %}
-        {{ info['db']['users'][user]['url'] }}
+        <a href="{{ info['db']['users'][user]['url'] }}">{{ info['db']['users'][user]['url'] }}</a>
         <div class='small_linebreak'>&nbsp;</div>
       {% endif %}
       <p><span style="color: #777777">User joined on</span> {{ info['db']['users'][user]['joined'] }}</p>
