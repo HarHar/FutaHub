@@ -32,8 +32,7 @@ function toggle_info() {
       $('#tbs').css('padding-left', '20px');
       $('#cont').css('padding-left', '20px');
       $('#dcontent').css('width', '90%');
-      //$('#butan').attr('src', '/static/forth.png');
-      $('#butan').text('[show panel]');
+      $('#butan').text('show panel');
       $('#butan').css('position', 'absolute');
     });
   } else {
@@ -42,8 +41,7 @@ function toggle_info() {
       $('#tbs').css('padding-left', '250px');
       $('#cont').css('padding-left', '250px');
       $('#dcontent').css('width', '60%');
-      //$('#butan').attr('src', '/static/back.png');
-      $('#butan').text('[hide panel]');
+      $('#butan').text('hide panel');
       $('#butan').css('position', 'fixed');
   });
   };
