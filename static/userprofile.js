@@ -8,13 +8,13 @@ $(document).ready(function() {
     $(value).click(function(){
       $('[id^=sort_btn]').removeClass('sort_btn_active');
       $(value).addClass('sort_btn_active');
-      $('#listNav').slideUp(2000, function() {
+      $('#listNav').slideUp(800, function() {
         $('#listNav').html('<img src="/static/loading.gif" style="padding-left: 20px;" />');
         $('#listNav').slideDown(250, function(){
           $.get('/orderedDb/' + user + '/' + db + '/' + $(value).attr('id'), function(data) {
             $('#listNav').slideUp(250, function() {
               $('#listNav').html(data);
-              $('#listNav').slideDown(2000);
+              $('#listNav').slideDown(800);
             });
           });
         });
