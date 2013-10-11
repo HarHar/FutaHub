@@ -141,7 +141,7 @@ li.active_d > a, li.active_d > a:hover, li.active_d > a:focus {
  * http://ricostacruz.com/nprogress */
 .spinner {
   display: block;
-  position: fixed;
+  position: absolute;
   z-index: 100;
 }
 
