@@ -525,7 +525,7 @@ if __name__ == '__main__':
     app.secret_key = ''.join([random.choice(string.letters) for x in xrange(0, 30)])
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     try:
-    	app.run(host='0.0.0.0', port=5000)
+    	app.run(host='0.0.0.0', port=5000, threaded=True)
     except Exception, e:
     	pass
     print 'Saving...'
