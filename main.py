@@ -502,7 +502,7 @@ else:
 					n = i
 			if cdb is None:
 				return notfound()
-			return render_template('navbar.html', sortedDb=sortDb(cdb['items'], factor))
+			return render_template('navbar.html', info=info(), user=user, sdb=db, cdb=cdb, dbname=dbase, leng=len(cdb['items']), n=n, sortedDb=sortDb(cdb['items'], factor))
 		return notfound()
 
 	@app.route('/<path:lel>')
