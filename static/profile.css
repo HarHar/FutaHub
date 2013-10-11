@@ -8,6 +8,45 @@
     outline: 0 !important;
   }
 
+#options_bar {
+    background-color: #1790E5;
+    width: 50%;
+    height: 5px;
+    overflow: hidden;
+}
+
+.opt {
+    background-color: #1790E5;
+    cursor: pointer;
+    text-align: center;
+}
+
+.opt:hover {
+    background-color: #005C9D;
+    cursor: pointer;
+}
+
+.aux {
+    display: none;
+}
+
+#sort_bar {
+    padding-left: 10px;
+}
+
+.sort_btn {
+    background-color: #D3E1FF;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.sort_btn:hover {
+    background-color: #B9CFFF;
+}
+
+.sort_btn_active {
+    background-color: #99B9FF !important;
+}
 
 .legend_c { border-left: #3090B4 3px solid; padding-left: 4px;}
 .legend_w { border-left: #00AB3F 3px solid; padding-left: 4px;}

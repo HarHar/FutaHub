@@ -290,16 +290,26 @@ if mode == 'private':
 				trstatus=utils.translated_status[entry['type']][entry['status']], platforms='/'.join(platforms),
 				aliases_len=len(deep['aliases']))
 else:
+	def sortDb(db, by):
+		return sorted(db, key=lambda x: x[by])
+	app.jinja_env.globals.update(sortDb=sortDb) #hax
+
 	def info():
 		global db, session, mode
 		logged_in = False
 		username = ''
 		user = None
+		sortBy = 'id'
+
 		if 'username' in session:
 			logged_in = True
 			username = escape(session['username'])
 			user = db['users'][session['username']]
-		return {'logged_in': logged_in, 'username': username, 'user': user, 'mode': mode, 'db': db}
+			if (user.get('sortBy') is None) == False:
+				sortBy = user['sortBy']
+
+		return {'logged_in': logged_in, 'username': username, 'user': user, 'mode': mode, 'db': db,
+		'sortby': sortBy}
 
 	@app.route('/')
 	def page_index():
@@ -476,7 +486,23 @@ else:
 					n = i
 			if cdb is None:
 				return notfound()
-			return render_template('userprofile.html', info=info(), user=user, sdb=db, cdb=cdb, leng=len(cdb['items']), n=n)
+			return render_template('userprofile.html', info=info(), user=user, sdb=db, cdb=cdb, dbname=dbase, leng=len(cdb['items']), n=n)
+		return notfound()
+
+	@app.route('/orderedDb/<user>/<dbase>/<sort>')
+	def navbar_ajax(user, dbase, sort):
+		factor = sort.replace('sort_btn_', '')
+		factor = factor.replace('age', 'id')
+
+		if (user in db['users']):
+			cdb = None
+			for i, ccdb in enumerate(db['users'][user]['dbs']):
+				if ccdb['name'] == dbase:
+					cdb = ccdb
+					n = i
+			if cdb is None:
+				return notfound()
+			return render_template('navbar.html', sortedDb=sortDb(cdb['items'], factor))
 		return notfound()
 
 	@app.route('/<path:lel>')

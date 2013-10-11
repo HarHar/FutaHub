@@ -3,6 +3,27 @@ var last_status = '';
 
 var toggled = 0;
 
+$(document).ready(function() {
+  $.each($('[id^=sort_btn]'), function(index, value) {
+    $(value).click(function(){
+      $('[id^=sort_btn]').removeClass('sort_btn_active');
+      $(value).addClass('sort_btn_active');
+      $('#listNav').slideUp(2000, function() {
+        $('#listNav').html('<img src="/static/loading.gif" style="padding-left: 20px;" />');
+        $('#listNav').slideDown(250, function(){
+          $.get('/orderedDb/' + user + '/' + db + '/' + $(value).attr('id'), function(data) {
+            $('#listNav').slideUp(250, function() {
+              $('#listNav').html(data);
+              $('#listNav').slideDown(2000);
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
+
 function select(i, username, dbid, status) {
   $('#' + last_i).removeClass('active_' + last_status);
   $('#' + i).addClass('active_' + status);

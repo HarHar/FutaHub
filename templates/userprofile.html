@@ -14,6 +14,12 @@
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/static/global.css" rel="stylesheet">
     <link href="/static/profile.css" rel="stylesheet">
+
+    <script>
+      var sortBy = '{{ info['sortby'] }}';
+      var user = '{{ info['db']['users'][user]['username'] }}';
+      var db = '{{ dbname }}';
+    </script>
   </head>
 
   <body>
@@ -97,20 +103,30 @@
 
       <div class="row-fluid">
         <div class="span3">
-          <div class="sidebar-nav" style="width: 300px;">
-            <ul class="nav nav-list">
-              {% if leng == 0 %}
-                No entries found, add entries by connecting to this server using Futaam
-              {% else %}
+          <div class="" style="width: 300px;">
+            <div id="sort_bar">
+              <span class="sort_btn sort_btn_active" id="sort_btn_age">Age</span>
+              <span class="sort_btn" id="sort_btn_name">Name</span>
+              <span class="sort_btn" id="sort_btn_type">Type</span>
+              <span class="sort_btn" id="sort_btn_status">Status</span>
+            </div>
 
-              {% for item in cdb['items'] %}
+            <div id="listNav">
+              <ul class="nav nav-list">
+                {% if leng == 0 %}
+                  No entries found, add entries by connecting to this server using Futaam
+                {% else %}
 
-              {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', {{ n }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
+                {% for item in cdb['items'] %}
 
-              {% endfor %}
+                {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', {{ n }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
 
-              {% endif %}
-            </ul>
+                {% endfor %}
+
+                {% endif %}
+              </ul>
+            </div>
+
           </div>
         </div>
         {% if leng != 0 %}
