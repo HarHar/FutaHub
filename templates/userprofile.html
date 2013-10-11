@@ -105,10 +105,10 @@
         <div class="span3">
           <div class="" style="width: 300px;">
             <div id="sort_bar">
-              <span class="sort_btn sort_btn_active" id="sort_btn_age">Age</span>
-              <span class="sort_btn" id="sort_btn_name">Name</span>
-              <span class="sort_btn" id="sort_btn_type">Type</span>
-              <span class="sort_btn" id="sort_btn_status">Status</span>
+              <span class="sort_btn {% if info['sortby'] == 'id' %} sort_btn_active {% endif %}" id="sort_btn_age">Age</span>
+              <span class="sort_btn {% if info['sortby'] == 'name' %} sort_btn_active {% endif %}" id="sort_btn_name">Name</span>
+              <span class="sort_btn {% if info['sortby'] == 'type' %} sort_btn_active {% endif %}" id="sort_btn_type">Type</span>
+              <span class="sort_btn {% if info['sortby'] == 'status' %} sort_btn_active {% endif %}" id="sort_btn_status">Status</span>
             </div>
 
             <div class="legend">
@@ -126,7 +126,7 @@
                   No entries found, add entries by connecting to this server using Futaam
                 {% else %}
 
-                {% for item in cdb['items'] %}
+                {% for item in sortDb(cdb['items'], info['sortby']) %}
 
                 {% if sdb != -1 %}<li id="{{ item['id'] }}" class="s_{{ item['status'] }} legend_{{ item['status'] }}"><a href="#" onclick="select({{ item['id'] }}, '{{ user }}', {{ n }}, '{{ item['status'] }}'); return false;">{{ item['name'] }}</a></li>{% endif %}
 

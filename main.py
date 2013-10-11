@@ -503,6 +503,8 @@ else:
 					n = i
 			if cdb is None:
 				return notfound()
+
+			db['users'][user]['sortBy'] = factor
 			return render_template('navbar.html', info=info(), user=user, sdb=db, cdb=cdb, dbname=dbase, leng=len(cdb['items']), n=n, sortedDb=sortDb(cdb['items'], factor))
 		return notfound()
 
