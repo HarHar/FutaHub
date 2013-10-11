@@ -31,13 +31,16 @@
 }
 
 #sort_bar {
-    padding-left: 10px;
+    padding-left: 15px;
+    margin-bottom: 5px;
 }
 
 .sort_btn {
     background-color: #D3E1FF;
     color: #FFF;
     cursor: pointer;
+    padding: 3px;
+    margin: 1px;
 }
 
 .sort_btn:hover {
