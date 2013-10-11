@@ -63,18 +63,12 @@
 .legend_h:hover:not(.active_h) {filter: alpha(opacity=60); opacity: 0.6;}
 .legend_d:hover:not(.active_d) {filter: alpha(opacity=60); opacity: 0.6;}
 
-div.legend { text-align: center; overflow: hidden; height: 25px !important }
-span.legend { text-align: center; }
-span.legend:hover + ul.legend { display: inline; }
-span.legend:hover + ul.legend_user { display: inline; }
-span.legend:hover { color: #ffffff; }
-ul.legend_user { position: relative; right: 50px; text-align: center; display: none; margin: 10px 2px; background-color: #f5f5f5; }
-ul.legend { position: relative; right: 50px; text-align: center; display: none; margin: 10px 5px; background-color: #f5f5f5; }
-.legend_c_box { min-width: 10px; border: 1px solid #222; background-color: #3090B4; padding: 1px 2px; font-size: 10px; display: inline; }
-.legend_w_box { min-width: 10px; border: 1px solid #222; background-color: #00AB3F; padding: 1px 2px; font-size: 10px; display: inline; }
-.legend_q_box { min-width: 10px; border: 1px solid #222; background-color: #DB95E5; padding: 1px 2px; font-size: 10px; display: inline; }
-.legend_h_box { min-width: 10px; border: 1px solid #222; background-color: #FFE880; padding: 1px 2px; font-size: 10px; display: inline; }
-.legend_d_box { min-width: 10px; border: 1px solid #222; background-color: #FF6F6F; padding: 1px 2px; font-size: 10px; display: inline; }
+div.legend { padding-left: 15px; margin-bottom: 5px; }
+span.legend_c_box { min-width: 10px; border: 1px solid #222; background-color: #3090B4; padding: 1px 2px; font-size: 10px; display: inline; }
+span.legend_w_box { min-width: 10px; border: 1px solid #222; background-color: #00AB3F; padding: 1px 2px; font-size: 10px; display: inline; }
+span.legend_q_box { min-width: 10px; border: 1px solid #222; background-color: #DB95E5; padding: 1px 2px; font-size: 10px; display: inline; }
+span.legend_h_box { min-width: 10px; border: 1px solid #222; background-color: #FFE880; padding: 1px 2px; font-size: 10px; display: inline; }
+span.legend_d_box { min-width: 10px; border: 1px solid #222; background-color: #FF6F6F; padding: 1px 2px; font-size: 10px; display: inline; }
 
 
 li.s_c > a:hover{
