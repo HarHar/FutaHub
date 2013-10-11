@@ -226,6 +226,7 @@ def save():
 	global db, dbpath
 	f = open(dbpath, 'w')
 	f.write(json.dumps(db))
+	f.flush()
 	f.close()
 
 def saveWorker():
@@ -526,6 +527,8 @@ if __name__ == '__main__':
     try:
     	app.run(host='0.0.0.0', port=5000)
     except Exception, e:
-    	save()
-    	print str(e)
-    	os.kill(os.getpid(), 9)
+    	pass
+    print 'Saving...'
+    save()
+    time.sleep(1)
+    os.kill(os.getpid(), 9)
