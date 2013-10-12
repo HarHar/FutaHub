@@ -4,6 +4,8 @@ var last_status = '';
 var toggled = 0;
 
 $(document).ready(function() {
+  $('[class^=legend_]').prop('on', '1');
+
   $.each($('[id^=sort_btn]'), function(index, value) {
     $(value).click(function(){
       $('[id^=sort_btn]').removeClass('sort_btn_active');
@@ -21,6 +23,22 @@ $(document).ready(function() {
         });
       });
     });
+  });
+
+  $.each($('[class^=legend_]'), function(index, value) {
+    $(value).click(function() {
+      if ($(value).prop('on') == '1') {
+        $(value).prop('on', '0');
+        $(value).addClass('legend_disabled');
+
+        $('[class^=s_' + $(value).attr('id') + ']').slideUp(600);
+      } else {
+        $(value).prop('on', '1');
+        $(value).removeClass('legend_disabled');
+
+        $('[class^=s_' + $(value).attr('id') + ']').slideDown(600);
+      }
+    })
   });
 });
 
