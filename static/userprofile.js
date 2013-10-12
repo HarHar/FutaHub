@@ -93,7 +93,7 @@ function toggle_info() {
 
 function showBiography(name, id) {
   $('#biography').slideUp(300, function() {
-    $('#biography').html('<br /><img src="/static/loading.gif" />');
+    $('#biography').html('<br /><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>');
     $('#biography').slideDown(300, function() {
       $.get('/ajax/biography', {name: name, id: id}, function(data){
         $('#biography').slideUp(300, function(){
