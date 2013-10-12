@@ -251,6 +251,17 @@ if '--test' in argv:
 	db = {'users': {'test': {'username': 'test', 'password': '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
 	'dbs': [{"count": 0, "items": [], "name": "el db", "description": "lel fgt"}]}}}
 
+if '--dummy_users' in argv:
+	for x in range(0, 20):
+		db['users']['dummyUser{0}'.format(x)] = {'username': 'dummyUser{0}'.format(x), 'password': '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+			'dbs': []}
+	db['users']
+
+if '--deldummy_users' in argv:
+	for x in db['users']:
+		if x['username'].startswith('dummyUser'):
+			db['users'].pop(x)
+
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
