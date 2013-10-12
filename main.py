@@ -307,7 +307,7 @@ else:
 			username = escape(session['username'])
 			user = db['users'][session['username']]
 			if (user.get('sortBy') is None) == False:
-				sortBy = user['sortBy']
+				sortBy = db['users'][session['username']].get('sortBy')
 
 		return {'logged_in': logged_in, 'username': username, 'user': user, 'mode': mode, 'db': db,
 		'sortby': sortBy}
@@ -504,7 +504,8 @@ else:
 			if cdb is None:
 				return notfound()
 
-			db['users'][user]['sortBy'] = factor
+			if 'username' in session:
+				db['users'][session['username']]['sortBy'] = factor
 			return render_template('navbar.html', info=info(), user=user, sdb=db, cdb=cdb, dbname=dbase, leng=len(cdb['items']), n=n, sortedDb=sortDb(cdb['items'], factor))
 		return notfound()
 
