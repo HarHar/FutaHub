@@ -412,7 +412,9 @@ else:
 				place = request.form['place'][:32]
 			if request.form.get('url') != None:
 				url = request.form['url'][:32]
-
+				if not (url.startswith('http://') or url.startswith('https://')):
+					url = 'http://' + url
+				
 			now = datetime.date.today()
 			joined = ("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())[now.month] + ' ' + str(now.day) + ', ' + str(now.year)
 
