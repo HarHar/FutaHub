@@ -10,7 +10,7 @@ body {
 	width: 300px;
 }
 
-img.avatars {
+.avatar {
 	padding: 5px;
 	border: 1px solid #AABAC5;
 	margin-bottom: 5px;
