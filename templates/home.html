@@ -53,7 +53,7 @@
         Watch animu better, together.
         <div style="margin-top: 30px; font-size: 21px;">Powerful collaboration, taste review, and backlog management for pros and plebs</div> 
       </div>
-      <div style="float: left; margin-top: 30px;"><!-- placeholder for avatar list --></div>
+      <div class="avatars">{% for user in info['db']['users'] %} <a href="/{{ user }}"><img src="http://gravatar.com/avatar/{{ info['db']['users'][user]['email_hash'] }}?s=40" class="avatars" /> </a> {% endfor %}</div>
     </div>
   </body>
 </html>
