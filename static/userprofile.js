@@ -11,12 +11,16 @@ $(document).ready(function() {
       $('[id^=sort_btn]').removeClass('sort_btn_active');
       $(value).addClass('sort_btn_active');
       $('#listNav').slideUp(800, function() {
-        //$('#listNav').html('<img src="/static/loading.gif" style="padding-left: 20px;" />');
         $('#listNav').html('<div class="spinner" role="spinner" style="padding-left: 30px;"><div class="spinner-icon"></div></div>');
         $('#listNav').slideDown(250, function(){
           $.get('/orderedDb/' + user + '/' + db + '/' + $(value).attr('id'), function(data) {
             $('#listNav').slideUp(250, function() {
               $('#listNav').html(data);
+              $.each($('[class^=legend_]'), function(index, value) {
+                if ($(value).prop('on') == '0') {
+                  $('[class^=s_' + $(value).attr('id') + ']').hide();
+                }
+              });
               $('#listNav').slideDown(800);
             });
           });
@@ -52,7 +56,6 @@ function select(i, username, dbid, status) {
   $('#dc').stop().animate({marginTop: $(window).scrollTop()});
 
   $('#dcontent').slideUp(300, function() {
-    //$('#dcontent').html('<img src="/static/loading.gif" />');
     $('#dcontent').html('<div class="spinner" role="spinner"><div class="spinner-icon"></div></div>');
     $('#dcontent').slideDown(300, function() {
       $.get('/ajax/entry', {index: i, user: username, db: dbid}, function(data){
