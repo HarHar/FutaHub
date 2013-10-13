@@ -7,6 +7,7 @@ body {
 .avatars {
 	float: left;
 	margin-top: 30px;
+	margin-left: 20px;
 	width: 300px;
 }
 
