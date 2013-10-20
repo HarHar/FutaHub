@@ -229,19 +229,6 @@ def save():
 	f.flush()
 	f.close()
 
-def saveWorker():
-	global db
-	interval = 60
-	while True:
-		global lastwrite, lastchange
-		time.sleep(interval)
-		if lastchange > lastwrite:
-			save()
-			lastwrite = time.time()
-swThread = threading.Thread(target=saveWorker)
-swThread.setDaemon(True)
-swThread.start()
-
 if not reload():
 	print('Specify the Futaam file by using the --db argument or put your database on ~/.futahub/main.db')
 	exit()
@@ -258,9 +245,25 @@ if '--dummy_users' in argv:
 	db['users']
 
 if '--deldummy_users' in argv:
+	toPop = []
 	for x in db['users']:
-		if x['username'].startswith('dummyUser'):
-			db['users'].pop(x)
+		if db['users'][x]['username'].startswith('dummyUser'):
+			toPop.append(x)
+	for popee in toPop:
+		db['users'].pop(popee)
+
+def saveWorker():
+	global db
+	interval = 60
+	while True:
+		global lastwrite, lastchange
+		time.sleep(interval)
+		if lastchange > lastwrite:
+			save()
+			lastwrite = time.time()
+swThread = threading.Thread(target=saveWorker)
+swThread.setDaemon(True)
+swThread.start()
 
 mal = utils.MALWrapper()
 vndb = utils.VNDB('FutaHub Dev', '0.1')
