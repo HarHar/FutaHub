@@ -271,10 +271,10 @@ ANNInitRet = ann.init()
 if ANNInitRet == 0:
     pass
 elif ANNInitRet == 1:
-    print COLORS.header + 'Updating metadata...' + COLORS.default
+    print colors.header + 'Updating metadata...' + colors.default
     ann.fetchReport(50)
 elif ANNInitRet == 2:
-    print COLORS.header + 'Updating ANN metadata cache for the first time...' + COLORS.default
+    print colors.header + 'Updating ANN metadata cache for the first time...' + colors.default
     ann.fetchReport('all')
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
