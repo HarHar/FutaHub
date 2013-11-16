@@ -266,6 +266,16 @@ swThread.setDaemon(True)
 swThread.start()
 
 mal = utils.MALWrapper()
+ann = utils.ANNWrapper()
+ANNInitRet = ann.init()
+if ANNInitRet == 0:
+    pass
+elif ANNInitRet == 1:
+    print COLORS.header + 'Updating metadata...' + COLORS.default
+    ann.fetchReport(50)
+elif ANNInitRet == 2:
+    print COLORS.header + 'Updating ANN metadata cache for the first time...' + COLORS.default
+    ann.fetchReport('all')
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
 if mode == 'private':
@@ -286,9 +296,8 @@ if mode == 'private':
 			entry[item] = cgi.escape(unicode(entry[item]))
 
 		if entry['type'] in ['anime', 'manga']:
-			deep = mal.details(entry['aid'], entry['type'])
-			characters = mal.getCharacterList(entry['aid'], deep['title'], entry['type'])
-			return render_template('entry_details.html', entry=entry, deep=deep, trstatus=utils.translated_status[entry['type']][entry['status']], characters=characters)
+			deep = ann.details(entry['aid'], entry['type'])
+			return render_template('entry_details.html', entry=entry, deep=deep, trstatus=utils.translated_status[entry['type']][entry['status']])
 		elif entry['type'] == 'vn':
 			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
 			platforms = []
@@ -466,10 +475,9 @@ else:
 			entry[item] = cgi.escape(unicode(entry[item]))
 
 		if entry['type'] in ['anime', 'manga']:
-			deep = mal.details(entry['aid'], entry['type'])
-			characters = mal.getCharacterList(entry['aid'], deep['title'], entry['type'])
+			deep = ann.details(entry['aid'], entry['type'])
 			return render_template('entry_details.html', entry=entry, deep=deep,
-			 trstatus=utils.translated_status[entry['type']][entry['status']], characters=characters)
+			 trstatus=utils.translated_status[entry['type']][entry['status']])
 		elif entry['type'] == 'vn':
 			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
 			platforms = []
