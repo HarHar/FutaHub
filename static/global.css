@@ -16,5 +16,5 @@
 
   .nolink {
     outline: 0 !important;
-    color: #0099FF !important;
+    color: rgb(51, 51, 51) !important;
   }

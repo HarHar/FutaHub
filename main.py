@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory, escape
+from flask import Flask, request, Response, session, g, redirect, url_for, abort, render_template, flash, make_response, send_from_directory, escape
 from werkzeug import secure_filename
 from sys import argv, stderr
 import sys, re
@@ -17,6 +17,7 @@ import threading
 import time
 import random
 import datetime
+import urllib
 
 class colours():
     def __init__(self):
@@ -477,9 +478,14 @@ else:
 		if entry['type'] in ['anime', 'manga']:
 			deep = ann.details(entry['aid'], entry['type'])
 			if deep.get('episode_names') != None:
-				deep['episode_keys'] = sorted(deep['episode_names'], key=lambda x: int(x))
+				deep['episode_keys'] = sorted(deep['episode_names'], key=lambda x: int(x) if x.isdigit() else 'OVA')
+			if entry.get('genre') != None and entry['type'] == 'anime':
+				entry['genre'] = entry['genre'].split('/')
+			if str(entry['lastwatched']).isdigit() == False:
+				entry['lastwatched'] = 0
+
 			return render_template('entry_details.html', entry=entry, deep=deep,
-			 trstatus=utils.translated_status[entry['type']][entry['status']])
+			 trstatus=utils.translated_status[entry['type']][entry['status']].lower())
 		elif entry['type'] == 'vn':
 			deep = vndb.get('vn', 'basic,details', '(id='+ str(entry['aid']) + ')', '')['items'][0]
 			platforms = []
@@ -534,6 +540,20 @@ else:
 				db['users'][session['username']]['sortBy'] = factor
 			return render_template('navbar.html', info=info(), user=user, sdb=db, cdb=cdb, dbname=dbase, leng=len(cdb['items']), n=n, sortedDb=sortDb(cdb['items'], factor))
 		return notfound()
+
+	@app.route('/proxyImage')
+	def proxyImage():
+		url = request.args.get('url', None)
+		if url.startswith('http://cdn.animenewsnetwork.com/') == False:
+			return ''
+		cacheDir = os.getenv('XDG_CACHE_HOME')
+		if cacheDir is None: cacheDir = os.path.join(os.path.expanduser('~'), '.cache/futahub')
+		if not os.path.exists(cacheDir):
+			os.makedirs(cacheDir)
+		if os.path.exists(os.path.join(cacheDir, os.path.basename(url))):
+			return Response(open(os.path.join(cacheDir, os.path.basename(url)), 'r').read(), mimetype='image/jpeg')
+		else:
+			return Response(urllib.urlopen(url).read(), mimetype='image/jpeg')
 
 	@app.route('/<path:lel>')
 	@app.errorhandler(404)
