@@ -13,3 +13,8 @@
   }
 
   .small_linebreak { line-height: 3px; }
+
+  .nolink {
+    outline: 0 !important;
+    color: #0099FF !important;
+  }

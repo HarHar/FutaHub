@@ -8,22 +8,53 @@
     <div id="collapseOne" class="accordion-body collapse in">
       <div class="accordion-inner">
 		{% if entry['type'] == 'anime' %}
-			<img src="{{ deep['image_url'] }}" style="float: right; padding-right: 10px;" />
-			<h1>{{ entry['name'] }}</h1>
+			<img src="{{ deep['image_url'] }}" style="float: right; padding-right: 10px; max-width: 250px;" />
+			<h1>{{ entry['name'] }} <small>{{ deep['type'] }}</small></h1>
 			<b>Status: </b>{{ trstatus }}<br />
-			<b>Last episode watched: </b>{{ entry['lastwatched'] }}<br />
-			<b>Total episodes: </b>{{ deep['episodes'] }}<br />
+			<b>Last episode watched: </b>{{ entry['lastwatched'] }} of {{ deep['episodes'] }}<br />
+			<br />
 			<b>Genre: </b>{{ entry['genre'] }}<br />
 			{% if deep['end_date'] != None %}
-				<b>Year: </b>{{ deep['start_date'] }} - {{ deep['end_date'] }}<br />
+				<!--<b>Aired: </b>{{ deep['start_date'] }} - {{ deep['end_date'] }}<br />-->
 			{% else %}
-				<b>Year: </b>{{ deep['start_date'] }} - ongoing<br />
+				<!--<b>Aired: </b>{{ deep['start_date'] }} - ongoing<br />-->
 			{% endif %}
-			<b>Type: </b>{{ deep['type'] }}<br />
-			<b>Classification: </b>{{ deep['classification'] }}<br />
-			<b>Synopsis: </b>{% autoescape false %}
-		{{ deep['synopsis'] }}{% endautoescape %}<br />
+			<b>Synopsis: </b>{% autoescape false %}		{{ deep['synopsis'] }}{% endautoescape %}<br />
+			{% if deep['credit']|length > 0 %}<b>Created by: </b>{{ ' / '.join(deep['credit']) }}<br />{% endif %}
 			<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
+			<br />
+	  		<hr />
+
+	        <a href="#" onclick="expand('#soundtrack_t', '#soundtrack_e', 'Soundtrack'); return false" class="nolink"> <span id="soundtrack_t" style="font-size: 18px;">+ Soundtrack</span></a><br />
+	        <div id="soundtrack_e" style="display: none;">
+	        {% for op in deep['OPsongs'] %}
+	        	<span style="padding-left: 10px; font-size: 12px"><small class="muted">(OP) </small>{{ op }}</span><br />
+	        {% endfor %}
+	        {% for ed in deep['EDsongs'] %}
+	        	<span style="padding-left: 10px; font-size: 12px"><small class="muted">(ED) </small>{{ ed }}</span><br />
+	        {% endfor %}
+	        </div>
+
+	        <hr />
+
+	        <div style="float: left;">
+	        	<a href="#" onclick="expand('#chars_t', '#chars_e', 'Characters'); return false" class="nolink"> <span id="chars_t" style="font-size: 18px;">+ Characters</span></a><br />
+	        	<div id="chars_e" style="display: none;">
+	        	{% for char in deep['characters'] %}
+		        	<span style="padding-left: 10px; font-size: 12px">{{ char }} <span class="muted">(voiced by {{ deep['characters'][char] }})</span></span><br />
+	        	{% endfor %}
+	        	</div>
+	        </div>
+
+	        <div style="float: left;">
+	        	<a href="#" onclick="expand('#eps_t', '#eps_e', 'Episodes'); return false"> <span id="eps_t" style="font-size: 18px;  padding-left: 10px;" class="nolink">+ Episodes</span></a><br />
+	        	<div id="eps_e" style="display: none; padding-left: 20px;">
+	        	{% for ep in deep['episode_keys'] %}
+		        	<span style="font-size: 12px"><span class="muted">#{{ ep }}</span> {{ deep['episode_names'][ep] }} </span><br />
+	        	{% endfor %}
+	        	</div>
+	        </div>
+	        <br /><br />
 		{% elif entry['type'] == 'manga' %}
 			<img src="{{ deep['image_url'] }}" style="float: right; padding-right: 10px;" />
 			<h1>{{ entry['name'] }}</h1>
@@ -49,22 +80,19 @@
 		{{ deep['description'] }}{% endautoescape %}<br />
 			<br />{% if entry['obs'] != '' %}<b>Observations: </b>{{ entry['obs'] }}{% else %}<b>No observations</b>{% endif %}
 		{% endif %}
-
       </div>
     </div>
   </div>
-  {% if (entry['type'] == 'anime') or (entry['type'] == 'manga') %}<div class="accordion-group">
-    <div class="accordion-heading">
+  {% if (entry['type'] == 'anime')%}
+  <!--<div class="accordion-group">
+	<div class="accordion-heading">
       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-        Characters
+        Soundtrack
       </a>
     </div>
     <div id="collapseTwo" class="accordion-body collapse">
       <div class="accordion-inner">
-        ur a cake
 
-        <br />
-        <div id="biography"></div>
       </div>
     </div>
   </div>
@@ -79,5 +107,5 @@
         lel faget
       </div>
     </div>
-  </div> {% endif %}
+  </div>--> {% endif %}
 </div>

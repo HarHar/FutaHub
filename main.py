@@ -272,10 +272,10 @@ if ANNInitRet == 0:
     pass
 elif ANNInitRet == 1:
     print colors.header + 'Updating metadata...' + colors.default
-    ann.fetchReport(50)
+    ann.fetch_report(50)
 elif ANNInitRet == 2:
     print colors.header + 'Updating ANN metadata cache for the first time...' + colors.default
-    ann.fetchReport('all')
+    ann.fetch_report('all')
 vndb = utils.VNDB('FutaHub Dev', '0.1')
 
 if mode == 'private':
@@ -439,7 +439,7 @@ else:
 					url = 'http://' + url
 				
 			now = datetime.date.today()
-			joined = ("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())[now.month] + ' ' + str(now.day) + ', ' + str(now.year)
+			joined = ("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())[now.month-1] + ' ' + str(now.day) + ', ' + str(now.year)
 
 			db['users'][request.form['username']] = {'username': request.form['username'], 'password': hashlib.sha256(request.form['password']).hexdigest(),
 			'dbs': [], 'email': email, 'email_hash': hashlib.md5(email).hexdigest(), 'place': place, 'url': url, 'name': request.form['name'][:32], 'joined': joined}
@@ -476,6 +476,8 @@ else:
 
 		if entry['type'] in ['anime', 'manga']:
 			deep = ann.details(entry['aid'], entry['type'])
+			if deep.get('episode_names') != None:
+				deep['episode_keys'] = sorted(deep['episode_names'], key=lambda x: int(x))
 			return render_template('entry_details.html', entry=entry, deep=deep,
 			 trstatus=utils.translated_status[entry['type']][entry['status']])
 		elif entry['type'] == 'vn':

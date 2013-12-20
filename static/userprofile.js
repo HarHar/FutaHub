@@ -104,3 +104,13 @@ function showBiography(name, id) {
     });
   });
 };
+
+function expand(link, element, text) {
+  if ($(element).css('display') == 'none') {
+    $(element).slideDown(200);
+    $(link).text('- ' + text);
+  } else {
+    $(element).slideUp(200);
+    $(link).text('+ ' + text);
+  }
+}
